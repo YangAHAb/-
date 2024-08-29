@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OpengaussHelper {
 
@@ -16,7 +20,19 @@ public class OpengaussHelper {
     Connection conn = null;
     Statement stmt = null;
 
-    public void test() {
+    public OpengaussHelper() {
+        _init();
+    }
+
+    public OpengaussHelper(int port, String dbName, String username, String password) {
+        url = String.format("jdbc:opengauss://127.0.0.1:%d/%s", port, dbName);
+        user = username;
+        this.password = password;
+
+        _init();
+    }
+
+    private void _init() {
         try {
             // 加载JDBC驱动程序
             Class.forName("org.opengauss.Driver");
@@ -26,36 +42,89 @@ public class OpengaussHelper {
 
             // 创建Statement对象来执行SQL查询
             stmt = conn.createStatement();
-            String sql = "SELECT * FROM test_table";
 
-            // 执行查询
-            ResultSet rs = stmt.executeQuery(sql);
 
-            // 处理结果
-            while (rs.next()) {
-                System.out.println("id: " + rs.getString("id"));
-                // 根据实际表结构和需求处理查询结果
-            }
-
-            // 关闭结果集
-            rs.close();
-            // 关闭Statement
-            stmt.close();
-            // 关闭连接
-            conn.close();
-
+            // 创建表结构
+            String sql = "CREATE TABLE test_table (id INT PRIMARY KEY, name VARCHAR(255))";
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-                if (conn != null)
-                    conn.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+        }
+    }
+
+    // 执行sql
+    public void execute(String sql) {
+        try {
+            // 执行查询
+            stmt.execute(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 查询所有列名, 返回List<String>
+    public List<String> getColumns(String tableName, String schema) {
+        if (schema.isBlank())
+            schema = "public";
+        List<String> columns = new ArrayList<>();
+        try {
+            ResultSet rs = conn.getMetaData().getColumns(tableName, schema, null, null);
+            while (rs.next()) {
+                columns.add(rs.getString("COLUMN_NAME"));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return columns;
+    }
+
+    // 对于指定的表，返回所有列名+数据，返回Map<String,List>
+    public Map<String, List<Object>> getTableData(String tableName) {
+        Map<String, List<Object>> tableData = new HashMap<>();
+        List<String> columns = getColumns(tableName, "public");
+
+        // 初始化结果Map
+        for (String column : columns) {
+            tableData.put(column, new ArrayList<>());
         }
 
+        try {
+            // 执行查询
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName);
+            while (rs.next()) {
+                for (String column : columns) {
+                    tableData.get(column).add(rs.getObject(column));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tableData;
     }
+
+    // TODO： 插入数据
+
+    // 关闭连接
+    public void close() {
+        try {
+            if (stmt != null)
+                stmt.close();
+            if (conn != null)
+                conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void test() {
+        try {
+            // 执行查询
+            List<String> columns = getColumns("test_table", "public");
+            System.out.println("columnNames: " + columns);
+            Map<String, List<Object>> tableData = getTableData("test_table");
+            System.out.println("tableData: " + tableData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

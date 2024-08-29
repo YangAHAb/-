@@ -14,6 +14,7 @@ public class SQLiteHelper {
     private Connection connection;
 
     // 带数据库URL的构造函数
+    // "jdbc:sqlite:F:\\zdlRepository\\test\\sqlite_db\\single_table.db"
     public SQLiteHelper(String url) {
         try {
             connection = DriverManager.getConnection(url);

@@ -10,5 +10,6 @@
         <module name="springboot3-desensitization" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel target="22" />
   </component>
 </project>

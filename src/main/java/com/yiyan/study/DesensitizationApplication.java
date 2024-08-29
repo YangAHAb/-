@@ -37,7 +37,7 @@ public class DesensitizationApplication {
         // String s = mapper.writeValueAsString(dto);
         // log.info("Json : {}", s);
 
-        // _test();
+        _test();
     }
 
     private static void _test() {
