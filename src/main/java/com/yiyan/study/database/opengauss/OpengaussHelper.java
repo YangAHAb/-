@@ -119,9 +119,9 @@ public class OpengaussHelper {
         try {
             // 执行查询
             List<String> columns = getColumns("test_table", "public");
-            System.out.println("columnNames: " + columns);
+            System.out.println("opengauss columnNames: " + columns);
             Map<String, List<Object>> tableData = getTableData("test_table");
-            System.out.println("tableData: " + tableData);
+            System.out.println("opengauss tableData: " + tableData);
         } catch (Exception e) {
             e.printStackTrace();
         }

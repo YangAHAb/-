@@ -42,7 +42,7 @@ public class DesensitizationApplication {
 
     private static void _test() {
         // _sqliteTest();
-        _opengaussTest();
+        // _opengaussTest();
     }
 
     private static void _opengaussTest() {
@@ -55,7 +55,7 @@ public class DesensitizationApplication {
 
         // 获取所有表
         List<String> tables = dbHelper.getAllTables();
-        System.out.println("Tables: " + tables);
+        System.out.println("gasuss Tables: " + tables);
 
         // 获取指定表的所有列名
         String tableName = tables.get(0);

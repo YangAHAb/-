@@ -161,6 +161,24 @@ public class identifyController {
         return ans;
     }
 
+    public static boolean canMask(List<Object> list) {
+        if (list.size() == 0) {
+            return false;
+        }
+
+        Object obj = list.get(0);
+        if (obj instanceof String) {
+            String str = (String) obj;
+
+            if (ISidcard(str) != "illegal" || ISphonenumber(str) != "illegal" || ISEmail(str) != "illegal"
+                    || ISaddress(str) != "illegal" || ISValidCardNumber(str) != "illegal") {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
     public static List<Object> maskList(List<Object> list) {
         List<String> targetList = list.stream()
                 .map(Object::toString) // 将每个对象转换为字符串

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.yiyan.study.Controller.Desensitization.identifyController;
+
 public class SQLiteHelper {
     private Connection connection;
 
@@ -26,7 +28,7 @@ public class SQLiteHelper {
     // 读取数据库的所有表，返回List
     public List<String> getAllTables() {
         List<String> tables = new ArrayList<>();
-        try (ResultSet rs = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"})) {
+        try (ResultSet rs = connection.getMetaData().getTables(null, null, "%", new String[] { "TABLE" })) {
             while (rs.next()) {
                 tables.add(rs.getString("TABLE_NAME"));
             }
@@ -47,6 +49,20 @@ public class SQLiteHelper {
             System.out.println("读取列名失败: " + e.getMessage());
         }
         return columns;
+    }
+
+    //
+    public List<Object> getColumnData(String tableName, String columnName) {
+        List<Object> columnData = new ArrayList<>();
+        String query = "SELECT " + columnName + " FROM " + tableName;
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                columnData.add(rs.getObject(columnName));
+            }
+        } catch (SQLException e) {
+            System.out.println("读取列数据失败: " + e.getMessage());
+        }
+        return columnData;
     }
 
     // 对于指定的表，返回所有列名+数据，返回Map<String,List>
@@ -74,17 +90,17 @@ public class SQLiteHelper {
 
     // 获取数据库中的所有表及其数据
     // Map<String,Map> allTableData = {
-    //  table_name1: {
-    //      column1:List
-    //      column2:List
-    //      ...
-    //    }
-    //  table_name2: {
-    //      column1:List
-    //      column2:List
-    //      ...
-    //    }
-    //    ...
+    // table_name1: {
+    // column1:List
+    // column2:List
+    // ...
+    // }
+    // table_name2: {
+    // column1:List
+    // column2:List
+    // ...
+    // }
+    // ...
     // }
     public Map<String, Map<String, List<Object>>> getAllTableData() {
         Map<String, Map<String, List<Object>>> allTablesData = new HashMap<>();
@@ -99,7 +115,8 @@ public class SQLiteHelper {
 
     // 创建新数据库并复制表结构和数据
     // newDatabaseUrl = "jdbc:sqlite:/path/to/new_database.db";
-    public void createDatabaseWithSameStructure( Map<String, Map<String, List<Object>>> newDatabaseData, String newDatabaseUrl) {
+    public void createDatabaseWithSameStructure(Map<String, Map<String, List<Object>>> newDatabaseData,
+            String newDatabaseUrl) {
         try (Connection newConnection = DriverManager.getConnection(newDatabaseUrl)) {
             if (newConnection != null) {
                 System.out.println("新数据库创建成功。");
@@ -120,7 +137,7 @@ public class SQLiteHelper {
                     }
 
                     copyTableData(newDatabaseData.get(table), table, newConnection);
-                     System.out.println("表 " + table + " 数据复制成功。");
+                    System.out.println("表 " + table + " 数据复制成功。");
                 }
             }
         } catch (SQLException e) {
@@ -132,7 +149,8 @@ public class SQLiteHelper {
     private String getCreateTableSQL(String tableName) {
         String createTableSQL = null;
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT sql FROM sqlite_master WHERE type='table' AND name='" + tableName + "'")) {
+                ResultSet rs = stmt.executeQuery(
+                        "SELECT sql FROM sqlite_master WHERE type='table' AND name='" + tableName + "'")) {
             if (rs.next()) {
                 createTableSQL = rs.getString("sql");
             }
@@ -178,6 +196,29 @@ public class SQLiteHelper {
         }
     }
 
+    public Map<String, List<String>> getAllColumns() {
+        Map<String, List<String>> allColumns = new HashMap<>();
+        List<String> tables = getAllTables();
+
+        for (String table : tables) {
+            allColumns.put(table, getColumns(table));
+        }
+        return allColumns;
+    }
+
+    public Map<String, List<Boolean>> getAllColumnsCanMask() {
+        Map<String, List<Boolean>> allColumnsCanMask = new HashMap<>();
+        Map<String, List<String>> allColumns = getAllColumns();
+
+        for (Map.Entry<String, List<String>> entry : allColumns.entrySet()) {
+            List<Boolean> canMask = new ArrayList<>();
+            for (String column : entry.getValue()) {
+                canMask.add(identifyController.canMask(getColumnData(entry.getKey(), column)));
+            }
+            allColumnsCanMask.put(entry.getKey(), canMask);
+        }
+        return allColumnsCanMask;
+    }
 
     // 关闭连接
     public void close() {
