@@ -1,7 +1,6 @@
 package com.yiyan.study;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yiyan.study.database.sqlite.SQLiteHelper;
 import com.yiyan.study.database.opengauss.OpengaussHelper;
 import com.yiyan.study.model.DesensitizationDTO;
@@ -34,16 +33,15 @@ public class DesensitizationApplication {
     public static void main(String[] args) throws JsonProcessingException {
         SpringApplication.run(DesensitizationApplication.class, args);
 
-        ObjectMapper mapper = new ObjectMapper();
-//        String s = mapper.writeValueAsString(dto);
-//        log.info("Json : {}", s);
-
+        // ObjectMapper mapper = new ObjectMapper();
+        // String s = mapper.writeValueAsString(dto);
+        // log.info("Json : {}", s);
 
         _test();
     }
 
     private static void _test() {
-//        _sqliteTest();
+        // _sqliteTest();
         _opengaussTest();
     }
 
@@ -72,7 +70,8 @@ public class DesensitizationApplication {
         }
 
         // test: create new db
-        dbHelper.createDatabaseWithSameStructure(dbHelper.getAllTableData(), "jdbc:sqlite:F:\\zdlRepository\\test\\sqlite_db\\new_single_table.db");
+        dbHelper.createDatabaseWithSameStructure(dbHelper.getAllTableData(),
+                "jdbc:sqlite:F:\\zdlRepository\\test\\sqlite_db\\new_single_table.db");
 
         // 关闭连接
         dbHelper.close();
