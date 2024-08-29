@@ -24,8 +24,8 @@ onMounted(() => {
                     router>
                     <el-menu-item index="/main">首页</el-menu-item>
                     <el-menu-item index="/upload">数据管理</el-menu-item>
-                    <el-menu-item index="/mask">敏感数据识别</el-menu-item>
-                    <el-menu-item index="/test1">数据脱敏</el-menu-item>
+                    <el-menu-item index="/identification">敏感数据识别</el-menu-item>
+                    <el-menu-item index="/mask">数据脱敏</el-menu-item>
                     <el-menu-item index="/login">账户</el-menu-item>
 
                 </el-menu>
