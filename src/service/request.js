@@ -36,12 +36,16 @@ export function post(url, data) {
     return instance.post(url, data);
 }
 
+// 开始脱敏
+
+
 // 下载文件
-export function downloadFile(url, params, fileName = 'downloaded_file.db') {
-    return instance.get(url, {
-        params,
-        responseType: 'blob' // 确保响应是以Blob形式返回
-    }).then(response => {
+export async function downloadFile(url, params, fileName = 'downloaded_file.db') {
+    try {
+        const response = await instance.get(url, {
+            params,
+            responseType: 'blob' // 确保响应是以Blob形式返回
+        });
         const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = downloadUrl;
@@ -51,10 +55,10 @@ export function downloadFile(url, params, fileName = 'downloaded_file.db') {
         link.remove();
         // 释放 Blob 对象的 URL
         window.URL.revokeObjectURL(downloadUrl);
-    }).catch(error => {
+    } catch (error) {
         console.error('下载文件失败:', error);
         throw error;
-    });
+    }
 }
 
 // 上传单个文件

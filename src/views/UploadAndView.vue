@@ -1,9 +1,10 @@
 <script setup lang="ts">  
 import { ref } from 'vue';  
-import { genFileId } from 'element-plus';  
+import { ElMessage, genFileId } from 'element-plus';  
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';  
 import { UploadFilled } from '@element-plus/icons-vue';
 import initSqlJs from 'sql.js';
+import { uploadFile } from '@/service/request';
 
 const SQL = initSqlJs({
     locateFile: (file) => `/node_modules/sql.js/dist/${file}`
@@ -15,6 +16,9 @@ const tableNameOpt = ref('')
 const tableNames = ref([])
 const tableData = ref([])
 const tableColumns = ref([])
+
+const dialogVisible = ref(false);  
+const uploadStatus = ref('');
   
 const fileContent = ref(null);  
 const imgSrc = ref(null);  
@@ -73,7 +77,14 @@ const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
     console.log('remove');  
 };  
   
-const handleExceed: UploadProps['onExceed'] = (files) => {  
+const handleExceed: UploadProps['onExceed'] = (files) => {
+    fileContent.value = null;  
+    imgSrc.value = null;
+    dbOutput.value = '';
+    tableNames.value=[];
+    tableNameOpt.value='';
+    tableData.value=[];
+    tableColumns.value=[];  
     upload.value!.clearFiles();  
     const file = files[0] as UploadRawFile;  
     file.uid = genFileId();  
@@ -84,22 +95,22 @@ const submitUpload = async () => {
     try {  
         if (!fileContent.value) {  
             throw new Error('No File!');  
-        }  
-        const formData = new FormData();  
-        formData.append('file', fileContent.value);  
-  
-        const response = await fetch(uploadUrl.value, {  
-            method: 'POST',  
-            body: formData,  
-        });  
-  
-        if (!response.ok) {  
-            throw new Error(`HTTP error! Status: ${response.status}`);  
-        }  
-        const data = await response.json();  
-        console.log('文件上传成功', data);  
-    } catch (error) {  
+        }
+        dialogVisible.value = true;  
+        uploadStatus.value = '正在上传...';    
+        const result = await uploadFile('/upload', fileContent.value);
+        uploadStatus.value = '文件上传成功';
+        ElMessage.success('文件上传成功');
+        console.log('文件上传成功',result);  
+    } catch (error) {
+        uploadStatus.value = '文件上传失败';  
+        ElMessage.error(`文件上传失败：${error.message}`);
         console.error('文件上传失败', error);  
+    }
+    finally {  
+        setTimeout(() => {  
+            dialogVisible.value = false;  
+        }, 2000); 
     }  
 };  
 </script>  
@@ -158,7 +169,14 @@ const submitUpload = async () => {
         <div class="no-file" v-else>  
             暂无文件  
         </div>  
-    </el-row>   
+    </el-row>
+    <el-dialog  
+        :visible.sync="dialogVisible"  
+        title="上传状态"  
+        width="30%"  
+    >  
+        <span>{{ uploadStatus }}</span>  
+    </el-dialog>   
 </template>  
   
 <style scoped>  

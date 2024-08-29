@@ -1,9 +1,37 @@
 <script setup>
-import { column } from 'element-plus/es/components/table-v2/src/common';
+import { downloadFile } from '@/service/request';
 import { onMounted, ref } from 'vue';
 
 const tableData = ref([])
 const state = ref(true)
+const testData = ref({columnNames: { table1 : ['a', 'b', 'c', 'd'], table2: ['e', 'f', 'g', 'h']},
+                    canMaskColumnNames: {table1: [true, false, true, false], table2: [true, true, true, false]}})
+
+const userId = 123;
+const taskId = 456;
+
+const handleGetIdentification = async () => {
+    let result // 获取敏感数据函数
+    result = testData.value
+    /*
+    columnNames:{"tableName":["column", ...], ...}
+    canMaskColumnNames: {"tableName": ["bool", ... ], ...}
+    */
+   tableData.value = []
+    for(const key in result.columnNames) {
+        for(let i=0;i<result.columnNames[key].length;i++) {
+            if(result.canMaskColumnNames[key][i]) {
+                tableData.value.push({
+                    database: 'testDB',
+                    table: key,
+                    column: result.columnNames[key][i],
+                    algorithm: 'testAlgo',
+                    state: true,
+                })
+            }
+        }
+    }
+}
 
 onMounted(()=> {
     tableData.value = [
@@ -49,6 +77,11 @@ onMounted(()=> {
                         </template>
                     </el-table-column>
                 </el-table>
+            </el-row>
+            <el-row>
+                <el-button type="primary" @click="handleGetIdentification">
+                    获取识别结果
+                </el-button>
             </el-row>
         </el-main>
     </el-container>
