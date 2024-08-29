@@ -37,7 +37,7 @@ public class DataMasking {
             SQLiteHelper sqLiteHelper = new SQLiteHelper(url);
             Map<String, Map<String, List<Object>>> dbData = sqLiteHelper.getAllTableData();
 
-            // 据库表中各个表的列名，以及这些列是否可以进行脱敏处理的标志
+            // 数据库表中各个表的列名，以及这些列是否可以进行脱敏处理的标志
             Map<String, List<String>> columnNames = sqLiteHelper.getAllColumns();
             Map<String, List<Boolean>> canMaskColumnNames = sqLiteHelper.getAllColumnsCanMask();
             System.out.println("columnNames: " + columnNames);
