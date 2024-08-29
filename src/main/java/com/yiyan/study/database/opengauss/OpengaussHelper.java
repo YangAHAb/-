@@ -58,6 +58,28 @@ public class OpengaussHelper {
         }
     }
 
+    // 执行查询
+    public ResultSet excuteQuery(String sql) {
+        try {
+            // 执行查询
+            return stmt.executeQuery(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 执行更新
+    public int executeUpdate(String sql) {
+        try {
+            // 执行查询
+            return stmt.executeUpdate(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     // 查询所有列名, 返回List<String>
     public List<String> getColumns(String tableName, String schema) {
         if (schema.isBlank())
@@ -97,8 +119,6 @@ public class OpengaussHelper {
         }
         return tableData;
     }
-
-    // TODO： 插入数据
 
     // 关闭连接
     public void close() {

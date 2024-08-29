@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yiyan.study.database.opengauss.OpengaussHelper;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 public class LoginController {
 
     int port = 15432;
-    String dbName = "test_db";
+    String dbName = "desensitization";
     String username = "gaussdb";
     String password = "openGauss@123";
 
@@ -26,21 +27,21 @@ public class LoginController {
     public Map<String, Object> register(@RequestParam String username, @RequestParam String password,
             @RequestParam String email) {
         Map<String, Object> response = new HashMap<>();
-        // String sql = "INSERT INTO \"user\" (username, password, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO \"user\" (username, password) VALUES (" + username + ", " + password + ")";
 
-        // try {
-        //     int result = opengaussHelper.update(sql, username, password, email);
-        //     if (result > 0) {
-        //         response.put("status", "success");
-        //         response.put("message", "注册成功！");
-        //     } else {
-        //         response.put("status", "error");
-        //         response.put("message", "注册失败！");
-        //     }
-        // } catch (Exception e) {
-        //     response.put("status", "error");
-        //     response.put("message", "发生错误：" + e.getMessage());
-        // }
+        try {
+            int result = opengaussHelper.executeUpdate(sql);
+            if (result > 0) {
+                response.put("status", "success");
+                response.put("message", "注册成功！");
+            } else {
+                response.put("status", "error");
+                response.put("message", "注册失败！");
+            }
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "发生错误：" + e.getMessage());
+        }
 
         return response;
     }
@@ -49,21 +50,21 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Map<String, Object> login(@RequestParam String username, @RequestParam String password) {
         Map<String, Object> response = new HashMap<>();
-        // String sql = "SELECT * FROM \"user\" WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM \"user\" WHERE username = " + username + " AND password = " + password;
 
-        // try {
-        //     Map<String, Object> user = opengaussHelper.queryForMap(sql, username, password);
-        //     if (user != null) {
-        //         response.put("status", "success");
-        //         response.put("message", "登录成功！");
-        //     } else {
-        //         response.put("status", "error");
-        //         response.put("message", "用户名或密码错误！");
-        //     }
-        // } catch (Exception e) {
-        //     response.put("status", "error");
-        //     response.put("message", "发生错误：" + e.getMessage());
-        // }
+        try {
+            ResultSet rs = opengaussHelper.excuteQuery(sql);
+            if (!rs.wasNull()) {
+                response.put("status", "success");
+                response.put("message", "登录成功！");
+            } else {
+                response.put("status", "error");
+                response.put("message", "用户名或密码错误！");
+            }
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "发生错误：" + e.getMessage());
+        }
 
         return response;
     }
