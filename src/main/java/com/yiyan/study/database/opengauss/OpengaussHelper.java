@@ -43,9 +43,6 @@ public class OpengaussHelper {
             // 创建Statement对象来执行SQL查询
             stmt = conn.createStatement();
 
-
-            // 创建表结构
-            String sql = "CREATE TABLE test_table (id INT PRIMARY KEY, name VARCHAR(255))";
         } catch (Exception e) {
             e.printStackTrace();
         }

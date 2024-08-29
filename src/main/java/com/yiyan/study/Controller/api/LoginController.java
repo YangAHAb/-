@@ -1,6 +1,6 @@
 package com.yiyan.study.Controller.api;
 
-import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +26,7 @@ public class LoginController {
     public Map<String, Object> register(@RequestParam String username, @RequestParam String password,
             @RequestParam String email) {
         Map<String, Object> response = new HashMap<>();
-        String sql = "INSERT INTO \"user\" (username, password, email) VALUES (?, ?, ?)";
+        // String sql = "INSERT INTO \"user\" (username, password, email) VALUES (?, ?, ?)";
 
         // try {
         //     int result = opengaussHelper.update(sql, username, password, email);
@@ -49,7 +49,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Map<String, Object> login(@RequestParam String username, @RequestParam String password) {
         Map<String, Object> response = new HashMap<>();
-        String sql = "SELECT * FROM \"user\" WHERE username = ? AND password = ?";
+        // String sql = "SELECT * FROM \"user\" WHERE username = ? AND password = ?";
 
         // try {
         //     Map<String, Object> user = opengaussHelper.queryForMap(sql, username, password);
