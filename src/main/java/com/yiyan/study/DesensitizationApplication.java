@@ -20,29 +20,15 @@ import java.util.Map;
 @Slf4j
 @RestController
 public class DesensitizationApplication {
-
-    private static final DesensitizationDTO dto = com.yiyan.study.model.DesensitizationDTO.builder()
-            .username("呼延泽")
-            .phoneNumber("19855362406")
-            .email("3114077197@qq.com")
-            .address("安徽省芜湖市")
-            .note("！ＣＸ＠Ｘ＃Ｘ")
-            .idCardNum("340204200304073219")
-            .build();
-
     public static void main(String[] args) throws JsonProcessingException {
         SpringApplication.run(DesensitizationApplication.class, args);
 
-        // ObjectMapper mapper = new ObjectMapper();
-        // String s = mapper.writeValueAsString(dto);
-        // log.info("Json : {}", s);
-
-        _test();
+        _dbTest();
     }
 
-    private static void _test() {
-        // _sqliteTest();
-        // _opengaussTest();
+    private static void _dbTest() {
+        _sqliteTest();
+        _opengaussTest();
     }
 
     private static void _opengaussTest() {
@@ -75,10 +61,5 @@ public class DesensitizationApplication {
 
         // 关闭连接
         dbHelper.close();
-    }
-
-    @GetMapping("/test")
-    public DesensitizationDTO desensitizationTest() {
-        return dto;
     }
 }
