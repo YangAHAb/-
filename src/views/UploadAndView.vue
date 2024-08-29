@@ -2,25 +2,74 @@
 import { ref } from 'vue';  
 import { genFileId } from 'element-plus';  
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';  
-import { UploadFilled } from '@element-plus/icons-vue';  
+import { UploadFilled } from '@element-plus/icons-vue';
+import initSqlJs from 'sql.js';
+
+const SQL = initSqlJs({
+    locateFile: (file) => `/node_modules/sql.js/dist/${file}`
+})
+
+const db = ref(null)
+const dbOutput = ref('')
+const tableNameOpt = ref('')
+const tableNames = ref([])
+const tableData = ref([])
+const tableColumns = ref([])
   
 const fileContent = ref(null);  
 const imgSrc = ref(null);  
 const uploadUrl = ref('http://localhost:3000/upload');  /* 后端端口 */
-const upload = ref<UploadInstance>();  
+const upload = ref<UploadInstance>();
+
+const handleTableSelectChange = async (value) => {
+    tableData.value=[];
+    tableColumns.value=[];
+    const result = await db.value.exec(`SELECT * FROM ${value};`);
+    const columns = result[0].columns
+    for(let col of columns) {
+        tableColumns.value.push({prop:col, label:col})
+    }
+    const values = result[0].values
+    for(let value of values) {
+        let obj = {}
+        for(let i=0;i<columns.length;i++) {
+            obj[columns[i]] = value[i]
+        }
+        tableData.value.push(obj)
+    }
+}
   
-const handleChange = (file: any) => {  
-    const reader = new FileReader();  
-    reader.onload = (e) => {  
-        imgSrc.value = e.target.result;  
-    };  
-    reader.readAsDataURL(file.raw);  
+const handleChange = (file: any) => {
+    dbOutput.value = ''
+    try {
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+            const UintDB = new Uint8Array(e.target.result as ArrayBuffer);
+            db.value = new (await SQL).Database(UintDB);
+            const tables = await db.value.exec('SELECT name FROM sqlite_master WHERE type="table";');
+            const tableNamesText = tables[0].values.map(row => row[0]);
+            for(let tableName of tableNamesText) {
+                tableNames.value.push({value:tableName, label:tableName});
+            }
+        }
+        reader.readAsArrayBuffer(file.raw)
+    } 
+    catch (error) {
+        dbOutput.value = `Error: ${error.message}`;
+    }
+
+    //保存文件内容  
     fileContent.value = file.raw;  
-};  
-  
+};
+
 const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {  
     fileContent.value = null;  
-    imgSrc.value = null;  
+    imgSrc.value = null;
+    dbOutput.value = '';
+    tableNames.value=[];
+    tableNameOpt.value='';
+    tableData.value=[];
+    tableColumns.value=[];
     console.log('remove');  
 };  
   
@@ -86,7 +135,26 @@ const submitUpload = async () => {
     <el-row class="image-container">  
         <div class="image-wrapper" v-if="imgSrc">  
             <img class="displayImage" :src="imgSrc" />  
-        </div>  
+        </div>
+        <div class="db-wrapper" v-else-if="tableNames.length !== 0">
+            <el-select v-model="tableNameOpt" placeholder="--请选择--" style="width: 240px" @change="handleTableSelectChange">
+                <el-option
+                    v-for="item in tableNames"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+            </el-select>
+            <el-table :data="tableData" stripe style="width: 100%;">
+                <el-table-column
+                v-for="(col, index) in tableColumns"
+                :key="index"
+                :prop="col.prop"
+                :label="col.label"
+                >
+                </el-table-column>
+            </el-table>
+        </div>
         <div class="no-file" v-else>  
             暂无文件  
         </div>  
@@ -151,7 +219,7 @@ const submitUpload = async () => {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     padding: 10px;  
     transition: all 0.3s; /* 过渡动画 */  
-}  
+}
   
 .image-wrapper:hover {  
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); 
@@ -168,5 +236,14 @@ const submitUpload = async () => {
     color: #999;  
     text-align: center;  
     padding: 20px;
-}  
+}
+
+.db-wrapper {
+    width: 100%;
+    border: 2px solid #e4e7ed;
+    border-radius: 8px;  
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 10px;  
+    transition: all 0.3s; /* 过渡动画 */
+}
 </style>
