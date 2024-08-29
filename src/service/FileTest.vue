@@ -8,12 +8,12 @@
         <input type="file" ref="singleFile" />
 
         <!-- 上传多个文件 -->
-        <button @click="uploadMultipleFilesHandle">上传多个文件</button>
-        <input type="file" ref="multipleFiles" multiple />
+        <!-- <button @click="uploadMultipleFilesHandle">上传多个文件</button>
+        <input type="file" ref="multipleFiles" multiple /> -->
 
         <!-- 上传文件和其他数据 -->
-        <button @click="uploadFileWithDataHandle">上传文件和其他数据</button>
-        <input type="file" ref="fileWithData" />
+        <!-- <button @click="uploadFileWithDataHandle">上传文件和其他数据</button>
+        <input type="file" ref="fileWithData" /> -->
     </div>
 </template>
 

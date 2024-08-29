@@ -1,6 +1,5 @@
 import { createMemoryHistory, createRouter } from 'vue-router'
 
-import HelloWorld from './components/HelloWorld.vue';
 import TheWelcome from './components/TheWelcome.vue';
 import UploadAndView from './views/UploadAndView.vue';
 import Login from './views/Login.vue';

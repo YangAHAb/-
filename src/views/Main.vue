@@ -6,11 +6,12 @@ defineProps({
     }
 })
 
-
+import ApiTest from '@/service/ApiTest.vue';
 </script>
 
 <template>
 
+    <ApiTest />
 
 </template>
 
