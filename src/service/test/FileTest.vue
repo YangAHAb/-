@@ -19,7 +19,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { downloadFile, uploadFile, uploadMultipleFiles, uploadFileWithData } from './request';
+import { downloadFile, uploadFile} from '@/service/request';
 
 // 引用输入框
 const singleFile = ref(null);
@@ -34,7 +34,7 @@ function downloadFileHandle() {
     downloadFile('/download', {
         user_id: userId,
         task_id: taskId
-    }, userId.toString() + "_" + taskId.toString() + ".db").then(() => {
+    }, userId.toString() + "_" + taskId.toString() + "_masked.db").then(() => {
         console.log('文件下载成功');
     }).catch(error => {
         console.error('文件下载失败:', error);
