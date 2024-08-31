@@ -1,7 +1,6 @@
 package com.yiyan.study.Controller.Desensitization;
 
 import cn.hutool.core.util.DesensitizedUtil;
-// import com.yiyan.study.model.DesensitizationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @SpringBootApplication
 @Slf4j
@@ -34,7 +34,7 @@ public class identifyController {
         }
         if (CHECK_CODE[sum % 11] == NeedIdentify.charAt(17)) {
             // DesensitizationDTO DX = com.yiyan.study.model.DesensitizationDTO.builder().idCardNum(NeedIdentify).build();
-            return "legal-idcard" + " " + DesensitizedUtil.idCardNum(String.valueOf(NeedIdentify), 6, 4);
+            return DesensitizedUtil.idCardNum(String.valueOf(NeedIdentify), 6, 4);
         } else
             return "illegal";
     }
@@ -57,7 +57,7 @@ public class identifyController {
                    */
             }
         }
-        return "legal-phonenumber" + " " + DesensitizedUtil.mobilePhone(String.valueOf(NeedIdentify));
+        return DesensitizedUtil.mobilePhone(String.valueOf(NeedIdentify));
     }
 
     @RequestMapping("/Email")
@@ -83,30 +83,74 @@ public class identifyController {
             return "legal-Email" + " " + DesensitizedUtil.email(String.valueOf(NeedIdentify));
         if (NeedIdentify.charAt(flag2 + 1) == 'c' && NeedIdentify.charAt(flag2 + 2) == 'o'
                 && NeedIdentify.charAt(flag2 + 3) == 'm' && flag2 + 3 == n - 1)
-            return "legal-Email" + " " + DesensitizedUtil.email(String.valueOf(NeedIdentify));
+            return DesensitizedUtil.email(String.valueOf(NeedIdentify));
         return "illegal";
     }
 
     @RequestMapping("/address")
     private static String ISaddress(String NeedIdentify) {
-        int n = NeedIdentify.length(), i;
-        char a;
-        int flag1 = -1, flag2 = 0;
-        for (i = 0; i < n; i++) {
-            a = NeedIdentify.charAt(i);
-            if (a == '省')
-                flag1 = i;
-        }
-        for (i = 0; i < n; i++) {
-            a = NeedIdentify.charAt(i);
-            if (a == '市')
-                flag2 = i;
-        }
-        if (flag1 != 2 && flag1 != 3)
+        int n = NeedIdentify.length();
+        int flag = -1;
+        char a = NeedIdentify.charAt(0), b = NeedIdentify.charAt(1), c = NeedIdentify.charAt(2),
+                d = NeedIdentify.charAt(3);
+        if (a == '河' && b == '北' && c == '省')
+            flag = 2;
+        if (a == '山' && b == '西' && c == '省')
+            flag = 2;
+        if (a == '辽' && b == '宁' && c == '省')
+            flag = 2;
+        if (a == '吉' && b == '林' && c == '省')
+            flag = 2;
+        if (a == '黑' && b == '龙' && c == '江' && d == '省')
+            flag = 3;
+        if (a == '江' && b == '苏' && c == '省')
+            flag = 2;
+        if (a == '安' && b == '徽' && c == '省')
+            flag = 2;
+        if (a == '浙' && b == '江' && c == '省')
+            flag = 2;
+        if (a == '福' && b == '建' && c == '省')
+            flag = 2;
+        if (a == '江' && b == '西' && c == '省')
+            flag = 2;
+        if (a == '山' && b == '东' && c == '省')
+            flag = 2;
+        if (a == '河' && b == '南' && c == '省')
+            flag = 2;
+        if (a == '湖' && b == '北' && c == '省')
+            flag = 2;
+        if (a == '湖' && b == '南' && c == '省')
+            flag = 2;
+        if (a == '广' && b == '东' && c == '省')
+            flag = 2;
+        if (a == '海' && b == '南' && c == '省')
+            flag = 2;
+        if (a == '四' && b == '川' && c == '省')
+            flag = 2;
+        if (a == '贵' && b == '州' && c == '省')
+            flag = 2;
+        if (a == '云' && b == '南' && c == '省')
+            flag = 2;
+        if (a == '陕' && b == '西' && c == '省')
+            flag = 2;
+        if (a == '甘' && b == '肃' && c == '省')
+            flag = 2;
+        if (a == '青' && b == '海' && c == '省')
+            flag = 2;
+        if (a == '台' && b == '湾' && c == '省')
+            flag = 2;
+        if (a == '北' && b == '京' && c == '市')
+            flag = 2;
+        if (a == '上' && b == '海' && c == '市')
+            flag = 2;
+        if (a == '天' && b == '津' && c == '市')
+            flag = 2;
+        if (a == '重' && b == '庆' && c == '市')
+            flag = 2;
+        if (flag == -1)
             return "illegal";
-        if (flag2 - flag1 <= 2)
-            return "illegal";
-        return "legal-Address" + " " + DesensitizedUtil.address(String.valueOf(NeedIdentify), n - flag1 - 1);
+        else
+            return DesensitizedUtil.address(String.valueOf(NeedIdentify), n - flag - 1);
     }
 
     @RequestMapping("/bankCard")
@@ -128,7 +172,7 @@ public class identifyController {
             doubleDigit = !doubleDigit;
         }
         if (sum % 10 == 0)
-            return "legal_bankcard" + " " + DesensitizedUtil.bankCard(String.valueOf(NeedIdentify));
+            return DesensitizedUtil.bankCard(String.valueOf(NeedIdentify));
         else
             return "illegal";
     }
@@ -162,21 +206,40 @@ public class identifyController {
     }
 
     public static boolean canMask(List<Object> list) {
+        List<Double> percentage = maskTypePercentageList(list);
+        int maxIdx = percentage.indexOf(Collections.max(percentage));
+        return maxIdx == 0 ? false : true;
+    }
+
+    public static List<Double> maskTypePercentageList(List<Object> list) {
         if (list.size() == 0) {
-            return false;
+            return new ArrayList<Double>();
         }
-
-        Object obj = list.get(0);
-        if (obj instanceof String) {
-            String str = (String) obj;
-
-            if (ISidcard(str) != "illegal" || ISphonenumber(str) != "illegal" || ISEmail(str) != "illegal"
-                    || ISaddress(str) != "illegal" || ISValidCardNumber(str) != "illegal") {
-                return true;
+        int flag0 = 0, flag1 = 0, flag2 = 0, flag3 = 0, flag4 = 0, flag5 = 0, N = list.size();
+        for (int i = 0; i < list.size(); i++) {
+            Object obj = list.get(i);
+            if (obj instanceof String) {
+                String str = (String) obj;
+                if (ISidcard(str) != "illegal")
+                    flag1++;
+                else if (ISphonenumber(str) != "illegal")
+                    flag2++;
+                else if (ISEmail(str) != "illegal")
+                    flag3++;
+                else if (ISaddress(str) != "illegal")
+                    flag4++;
+                else if (ISValidCardNumber(str) != "illegal")
+                    flag5++;
+                else
+                    flag0++;
             }
-
         }
-        return false;
+        double percent0 = flag0 * 1.0 / N, percent1 = flag1 * 1.0 / N, percent2 = flag2 * 1.0 / N,
+                percent3 = flag3 * 1.0 / N,
+                percent4 = flag4 * 1.0 / N, percent5 = flag5 * 1.0 / N;
+
+        // 返回List of double
+        return new ArrayList<Double>(List.of(percent0, percent1, percent2, percent3, percent4, percent5));
     }
 
     public static List<Object> maskList(List<Object> list) {
