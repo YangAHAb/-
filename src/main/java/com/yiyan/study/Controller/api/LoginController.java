@@ -20,7 +20,7 @@ public class LoginController {
 
     String host = "127.0.0.1";
     int port = 15432;
-    String dbName = "desensitization";
+    String dbName = "postgres";
     String dbUsername = "gaussdb";
     String dbPassword = "openGauss@123";
 

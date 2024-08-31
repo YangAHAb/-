@@ -13,7 +13,7 @@ public class OpengaussHelper {
     private HikariDataSource dataSource;
 
     public OpengaussHelper() {
-        _initDataSource("127.0.0.1", 15432, "desensitization", "gaussdb", "openGauss@123");
+        _initDataSource("127.0.0.1", 15432, "postgres", "gaussdb", "openGauss@123");
         _initializeTables();
     }
 
