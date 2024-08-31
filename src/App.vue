@@ -1,13 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import router from './router';
+import router from './router/router';
 const activeIndex = ref('/main')
 function handleSelect(index) {
     activeIndex.value = index
 }
 
 onMounted(() => {
-    router.push("/main")
+    router.push("/upload")
 })  
 </script>
 
@@ -27,7 +27,6 @@ onMounted(() => {
                     <el-menu-item index="/identification">敏感数据识别</el-menu-item>
                     <el-menu-item index="/mask">数据脱敏结果</el-menu-item> 
                     <el-menu-item index="/login">账户</el-menu-item>
-
                 </el-menu>
             </el-header>
 
