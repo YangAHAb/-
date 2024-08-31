@@ -24,8 +24,10 @@ public class OpengaussHelper {
         _init();
     }
 
-    public OpengaussHelper(int port, String dbName, String username, String password) {
-        url = String.format("jdbc:opengauss://127.0.0.1:%d/%s", port, dbName);
+    public OpengaussHelper(String host, int port, String dbName, String username, String password) {
+        if (host.isEmpty())
+            host = "127.0.0.1";
+        url = String.format("jdbc:opengauss://%s:%d/%s", host, port, dbName);
         user = username;
         this.password = password;
 
@@ -34,17 +36,26 @@ public class OpengaussHelper {
 
     private void _init() {
         try {
-            // 加载JDBC驱动程序
-            Class.forName("org.opengauss.Driver");
-
             // 创建连接
-            conn = DriverManager.getConnection(url, user, password);
-
+            conn = getConnection();
             // 创建Statement对象来执行SQL查询
             stmt = conn.createStatement();
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public Connection getConnection() {
+        try {
+            // 加载JDBC驱动程序
+            Class.forName("org.opengauss.Driver");
+
+            // 创建并返回新的连接
+            return DriverManager.getConnection(url, user, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -82,7 +93,7 @@ public class OpengaussHelper {
 
     // 查询所有列名, 返回List<String>
     public List<String> getColumns(String tableName, String schema) {
-        if (schema.isBlank())
+        if (schema.isEmpty())
             schema = "public";
         List<String> columns = new ArrayList<>();
         try {

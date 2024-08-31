@@ -1,7 +1,7 @@
 package com.yiyan.study.Controller.Desensitization;
 
 import cn.hutool.core.util.DesensitizedUtil;
-import com.yiyan.study.model.DesensitizationDTO;
+// import com.yiyan.study.model.DesensitizationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +33,7 @@ public class identifyController {
             sum += (NeedIdentify.charAt(i) - '0') * WEIGHT[i];
         }
         if (CHECK_CODE[sum % 11] == NeedIdentify.charAt(17)) {
-            DesensitizationDTO DX = com.yiyan.study.model.DesensitizationDTO.builder().idCardNum(NeedIdentify).build();
+            // DesensitizationDTO DX = com.yiyan.study.model.DesensitizationDTO.builder().idCardNum(NeedIdentify).build();
             return "legal-idcard" + " " + DesensitizedUtil.idCardNum(String.valueOf(NeedIdentify), 6, 4);
         } else
             return "illegal";

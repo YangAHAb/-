@@ -30,7 +30,7 @@ public class DownloadController {
             @RequestParam("task_id") String task_id) throws MalformedURLException {
 
         // 根据请求参数动态构建文件名或路径
-        String fileName = "De-identified_" + userId + "_" + task_id + ".db"; // 示例：文件名根据 user_id 和 task_id 生成
+        String fileName = userId + "_" + task_id + "_masked.db"; // 示例：文件名根据 user_id 和 task_id 生成
         Path filePath = fileStorageLocation.resolve(fileName).normalize();
 
         // 确保文件存在

@@ -3,11 +3,11 @@ package com.yiyan.study;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yiyan.study.database.sqlite.SQLiteHelper;
 import com.yiyan.study.database.opengauss.OpengaussHelper;
-import com.yiyan.study.model.DesensitizationDTO;
+// import com.yiyan.study.model.DesensitizationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,9 +23,10 @@ public class DesensitizationApplication {
     public static void main(String[] args) throws JsonProcessingException {
         SpringApplication.run(DesensitizationApplication.class, args);
 
-        _dbTest();
+        // _dbTest();
     }
 
+    @SuppressWarnings("unused")
     private static void _dbTest() {
         _sqliteTest();
         _opengaussTest();
@@ -37,11 +38,11 @@ public class DesensitizationApplication {
 
     private static void _sqliteTest() {
         // sqlite test
-        SQLiteHelper dbHelper = new SQLiteHelper("jdbc:sqlite:F:\\zdlRepository\\test\\sqlite_db\\single_table.db");
+        SQLiteHelper dbHelper = new SQLiteHelper("jdbc:sqlite:F:\\zdlRepository\\_desensitization\\sqlite_db\\single_table.db");
 
         // 获取所有表
         List<String> tables = dbHelper.getAllTables();
-        System.out.println("gasuss Tables: " + tables);
+        System.out.println("Tables: " + tables);
 
         // 获取指定表的所有列名
         String tableName = tables.get(0);
@@ -57,7 +58,7 @@ public class DesensitizationApplication {
 
         // test: create new db
         dbHelper.createDatabaseWithSameStructure(dbHelper.getAllTableData(),
-                "jdbc:sqlite:F:\\zdlRepository\\test\\sqlite_db\\new_single_table.db");
+                "jdbc:sqlite:F:\\zdlRepository\\_desensitization\\sqlite_db\\new_single_table.db");
 
         // 关闭连接
         dbHelper.close();

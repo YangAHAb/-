@@ -72,7 +72,7 @@ public class DataMasking {
             Map<String, Map<String, List<Object>>> maskedDbData = maskData(dbData);
 
             // 保存脱敏后的数据到新的数据库文件
-            String maskedDbName = "De-identified_" + userId + "_" + taskId + ".db";
+            String maskedDbName = userId + "_" + taskId + "_masked.db";
             Path maskedPath = Paths.get("transfer", "downloaded-files", maskedDbName);
             String maskedUrl = "jdbc:sqlite:" + maskedPath.toString();
             sqLiteHelper.createDatabaseWithSameStructure(maskedDbData, maskedUrl);
