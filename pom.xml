@@ -10,31 +10,40 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>22</source> <!-- 设置源代码版本 -->
+                    <target>22</target> <!-- 设置目标字节码版本 -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
-
     <artifactId>springboot3-desensitization</artifactId>
-
     <dependencies>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
             <version>6.3.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
             <version>3.3.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.opengauss</groupId>
             <artifactId>opengauss-jdbc</artifactId>
             <version>6.0.0-RC1-og</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.46.1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -56,19 +65,8 @@
             <artifactId>hutool-core</artifactId>
             <version>5.8.31</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.46.1.0</version>
-        </dependency>
-
     </dependencies>
-
-
     <dependencyManagement>
-
-
         <dependencies>
 
             <dependency>
@@ -76,9 +74,7 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>2.0.16</version>
             </dependency>
-
-
         </dependencies>
-
     </dependencyManagement>
+
 </project>

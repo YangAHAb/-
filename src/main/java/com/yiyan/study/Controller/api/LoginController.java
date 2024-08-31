@@ -43,7 +43,6 @@ public class LoginController {
             pstmt.setString(1, username);
             pstmt.setString(2, encryptedPassword);
 
-            System.out.println(pstmt.toString());
             int result = pstmt.executeUpdate();
             if (result > 0) {
                 response.put("status", "success");
@@ -72,10 +71,7 @@ public class LoginController {
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
 
-            System.out.println(pstmt.toString());
             ResultSet rs = pstmt.executeQuery();
-            System.out.println("login:");
-            System.out.println(rs);
             if (rs.next()) {
                 String storedPassword = rs.getString("password");
                 if (passwordEncoder.matches(password, storedPassword)) {
