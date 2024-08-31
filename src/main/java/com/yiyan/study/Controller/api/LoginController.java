@@ -35,15 +35,25 @@ public class LoginController {
         String username = user.get("username");
         String password = user.get("password");
 
+        String checkUserSql = "SELECT COUNT(*) FROM \"user\" WHERE username = ?";
         String encryptedPassword = passwordEncoder.encode(password);
-        String sql = "INSERT INTO \"user\" (username, password) VALUES (?, ?)";
+        String insertUserSql = "INSERT INTO \"user\" (username, password) VALUES (?, ?)";
 
         try (Connection conn = opengaussHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, encryptedPassword);
+             PreparedStatement checkUserStmt = conn.prepareStatement(checkUserSql);
+             PreparedStatement insertUserStmt = conn.prepareStatement(insertUserSql)) {
 
-            int result = pstmt.executeUpdate();
+            checkUserStmt.setString(1, username);
+            ResultSet rs = checkUserStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                response.put("status", "error");
+                response.put("message", "用户名已存在！");
+                return response;
+            }
+
+            insertUserStmt.setString(1, username);
+            insertUserStmt.setString(2, encryptedPassword);
+            int result = insertUserStmt.executeUpdate();
             if (result > 0) {
                 response.put("status", "success");
                 response.put("message", "注册成功！");
