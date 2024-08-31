@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { get, post } from './request';
+import { get, post } from '@/service/request';
 
 // 处理 GET 请求
 async function getMyHandle() {
