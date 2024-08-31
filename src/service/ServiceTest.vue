@@ -21,24 +21,10 @@ async function getMyHandle() {
     }
 }
 
-// 处理 POST 请求
-async function postMyHandle() {
-    try {
-        const response = await post(
-            '/api/login',  // 假设你有一个 POST API 地址
-            {
-                privateKey: "your_private_key"
-            }
-        );
-        if (response.data.valid) {
-            console.log('Private key is valid');
-        } else {
-            console.log('Private key is not valid');
-        }
-    } catch (error) {
-        console.error('POST 请求失败:', error);
-    }
-}
+// 登录：api/login
+
+
+
 </script>
 
 <style lang="scss" scoped></style>
