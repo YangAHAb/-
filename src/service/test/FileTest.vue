@@ -12,14 +12,14 @@
         <input type="file" ref="multipleFiles" multiple /> -->
 
         <!-- 上传文件和其他数据 -->
-        <!-- <button @click="uploadFileWithDataHandle">上传文件和其他数据</button>
-        <input type="file" ref="fileWithData" /> -->
+        <button @click="uploadFileWithDataHandle">上传文件和其他数据</button>
+        <input type="file" ref="fileWithData" />
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { downloadFile, uploadFile} from '@/service/request';
+import { downloadFile, uploadFile, uploadFileWithData } from '@/service/request';
 
 // 引用输入框
 const singleFile = ref(null);
@@ -30,26 +30,42 @@ const userId = 123;
 const taskId = 456;
 
 // 处理文件下载
-function downloadFileHandle() {
-    downloadFile('/download', {
-        user_id: userId,
-        task_id: taskId
-    }, userId.toString() + "_" + taskId.toString() + "_masked.db").then(() => {
-        console.log('文件下载成功');
-    }).catch(error => {
-        console.error('文件下载失败:', error);
-    });
+async function downloadFileHandle() {
+    try {
+        const response = await downloadFile('/download', {
+            user_id: userId,
+            task_id: taskId
+        }, userId.toString() + "_" + taskId.toString() + "_masked.db");
+
+        console.log('downloaded:' + response.data);
+    } catch (error) {
+        console.error('download_err:', error);
+    };
 }
 
 // 处理单个文件上传
-function uploadSingleFileHandle() {
+async function uploadSingleFileHandle() {
     const file = singleFile.value?.files[0];
     if (file) {
-        uploadFile('/upload', file).then(() => {
-            console.log('文件上传成功');
-        }).catch(error => {
-            console.error('文件上传失败:', error);
-        });
+        try {
+            const response = await uploadFile('/upload', file);
+            console.log('uploaded:', response.data);
+        } catch (error) {
+            console.error('upload_err:', error);
+        }
+    }
+}
+
+// 处理单个文件+用户信息上传
+async function uploadFileWithDataHandle() {
+    const file = fileWithData.value?.files[0];
+    if (file) {
+        try {
+            const response = await uploadFileWithData('/uploadWithData', file, { "user_id": userId, "task_id": taskId });
+            console.log('uploaded:', response.data);
+        } catch (error) {
+            console.error('upload_err:', error);
+        }
     }
 }
 
