@@ -1,8 +1,9 @@
 <script setup>
 import MenuBar from '../MenuBar.vue';
 import { downloadFile } from '@/service/request';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { get, post } from '@/service/request';
+import { store } from '@/main';
 
 const tableData = ref([])
 const state = ref(true)
@@ -10,6 +11,34 @@ const testData = ref({
     columnNames: { table1: ['a', 'b', 'c', 'd'], table2: ['e', 'f', 'g', 'h'] },
     canMaskColumnNames: { table1: [true, false, true, false], table2: [true, true, true, false] }
 })
+
+const showTableData = computed(() => {
+    let newTable = [];
+    for(let item of tableData.value) {
+        newTable.push({
+            database: item.database,
+            table: item.table,
+            column: item.column,
+            status: item.status?'敏感':'不敏感',
+        })
+    }
+    return newTable;
+})
+
+const algorithmOptions = [
+    {
+        value: 1,
+        label: '脱敏算法1',
+    },
+    {
+        value: 2,
+        label: '脱敏算法2',
+    },
+    {
+        value: 3,
+        label: '脱敏算法3',
+    },
+]
 
 const userId = 123;
 const taskId = 456;
@@ -19,8 +48,8 @@ const handleGetIdentification = async () => {
         const response = await get(
             '/identify',
             {
-                user_id: userId,
-                task_id: taskId
+                user_id: store.getUsername,
+                task_id: 456
             }
         );
         console.log('识别请求成功:', response.data);
@@ -34,17 +63,21 @@ const handleGetIdentification = async () => {
         tableData.value = []
         for (const key in result.columnNames) {
             for (let i = 0; i < result.columnNames[key].length; i++) {
-                if (result.canMaskColumnNames[key][i]) {
-                    tableData.value.push({
-                        database: 'testDB',
+                let status = true;
+                // if (result.canMaskColumnNames[key][i]) {
+                //     status = 
+                // }
+                tableData.value.push({
+                        database: 'testDB',// 需要改成真正名字
                         table: key,
                         column: result.columnNames[key][i],
-                        algorithm: 'testAlgo',
-                        state: true,
+                        algorithm: 1,
+                        state: result.canMaskColumnNames[key][i],
+                        status: result.canMaskColumnNames[key][i]
                     })
-                }
             }
         }
+        store.setIdentificationResults(tableData.value);
     } catch (error) {
         console.error('识别请求失败:', error);
     }
@@ -56,17 +89,20 @@ onMounted(() => {
             database: 'testDB',
             table: 'testTable',
             column: 'testColumn',
-            algorithm: 'testAlgo',
+            algorithm: 1,
             state: true,
+            status: true,
         },
         {
             database: 'testDB2',
             table: 'testTable2',
             column: 'testColumn2',
-            algorithm: 'testAlgo2',
+            algorithm: 2,
             state: false,
+            status: false,
         }
     ]
+    store.setIdentificationResults(tableData.value);
 })
 
 </script>
@@ -76,23 +112,11 @@ onMounted(() => {
     <el-container>
         <el-main>
             <el-row>
-                <el-table :data="tableData">
+                <el-table :data="showTableData">
                     <el-table-column prop="database" label="数据库" />
                     <el-table-column prop="table" label="表" />
                     <el-table-column prop="column" label="列" />
-                    <el-table-column prop="algorithm" label="脱敏算法" />
-                    <el-table-column prop="state" label="启用状态">
-                        <template v-slot="{ row }">
-                            <el-switch v-model="row.state" />
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作">
-                        <template #default>
-                            <el-button link type="primary" size="small" @click="handleClick">
-                                编辑
-                            </el-button>
-                            <el-button link type="primary" size="small">删除</el-button>
-                        </template>
+                    <el-table-column prop="status" label="识别结果">
                     </el-table-column>
                 </el-table>
             </el-row>

@@ -5,7 +5,8 @@ import { ElMessage, genFileId } from 'element-plus';
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';  
 import { UploadFilled } from '@element-plus/icons-vue';
 import initSqlJs from 'sql.js';
-import { uploadFile } from '@/service/request';
+import { uploadFile, uploadFileWithData } from '@/service/request';
+import { store } from '@/main';
 
 const SQL = initSqlJs({
     locateFile: (file) => `/node_modules/sql.js/dist/${file}`
@@ -99,7 +100,7 @@ const submitUpload = async () => {
         }
         dialogVisible.value = true;  
         uploadStatus.value = '正在上传...';    
-        const result = await uploadFile('/upload', fileContent.value);
+        const result = await uploadFileWithData('/uploadWithData', fileContent.value, { "user_id": store.getUsername, "task_id": 456 });
         uploadStatus.value = '文件上传成功';
         ElMessage.success('文件上传成功');
         console.log('文件上传成功',result);  

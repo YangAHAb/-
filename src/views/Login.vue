@@ -1,5 +1,5 @@
 <template>
-  <MenuBar />
+  <!-- <MenuBar /> -->
   <div class="login-register-container">
     <el-tabs v-model="activeTab" @tab-click="handleTabClick">
       <el-tab-pane label="登录" name="login">
@@ -45,6 +45,7 @@ import axios from 'axios';
 import router from '@/router/router';
 import { store } from '@/main';
 import MenuBar from '../MenuBar.vue';
+import { post } from '@/service/request';
 
 // 定义表单数据
 const loginForm = reactive({
@@ -125,12 +126,16 @@ const handleSubmit = (formName) => {
 // 登录逻辑
 const handleLogin = async () => {
   try {
-    const response = await axios.post('/api/login', loginForm);
-    const token = response.data.token; // 假设后端返回的是一个 token
-    store.setToken(token);
+    const response = await post('/login', loginForm);
+    // const token = response.data.token; // 假设后端返回的是一个 token
+    const status = response.data.status;
+    if(status !== 'success') {
+        throw new Error(response.data.message)
+    }
+    store.setUsername(loginForm.username)
     ElMessage.success('登录成功！');
     // 在这里添加跳转到主页或其他逻辑
-    router.push('/upload')
+    router.push('/main')
   } catch (error) {
     ElMessage.error('登录失败，请检查用户名和密码');
   }
@@ -139,13 +144,18 @@ const handleLogin = async () => {
 // 注册逻辑
 const handleRegister = async () => {
   try {
-    const response = await axios.post('/api/register', registerForm);
+    const response = await post('/register', registerForm);
+    const status = response.data.status;
+    if(status !== 'success') {
+        throw new Error(response.data.message)
+    }
     ElMessage.success('注册成功！');
     // 清空表单
     registerForm.username = '';
     registerForm.email = '';
     registerForm.password = '';
     registerForm.confirmPassword = '';
+    activeTab.value = 'login';
   } catch (error) {
     ElMessage.error('注册失败，请检查输入的信息');
   }

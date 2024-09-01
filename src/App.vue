@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 import router from './router/router';
 
 onMounted(() => {
-    router.push("/upload")
+    router.push("/login")
 })  
 </script>
 
