@@ -26,7 +26,7 @@ import java.sql.SQLException;
 @RequestMapping("/api")
 public class UploadController {
 
-    private final Path fileStorageLocation = Paths.get("transfer", "uploaded-files");
+    private final Path fileStorageLocation = Paths.get("transfer", "uploaded_files");
     private final OpengaussHelper opengaussHelper;
 
     @Autowired

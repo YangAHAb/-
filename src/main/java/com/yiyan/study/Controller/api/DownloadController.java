@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 @RequestMapping("/api")
 public class DownloadController {
 
-    private final Path fileStorageLocation = Paths.get("transfer", "downloaded-files");
+    private final Path fileStorageLocation = Paths.get("transfer", "downloaded_files");
 
     public DownloadController() throws IOException {
         Files.createDirectories(fileStorageLocation);

@@ -28,7 +28,7 @@ public class DataMasking {
         try {
             // 读取上传的数据库文件
             String dbName = userId + "_" + taskId + ".db";
-            Path path = Paths.get("transfer", "uploaded-files", dbName);
+            Path path = Paths.get("transfer", "uploaded_files", dbName);
             String url = "jdbc:sqlite:" + path.toString();
             SQLiteHelper sqLiteHelper = new SQLiteHelper(url);
 
@@ -63,7 +63,7 @@ public class DataMasking {
         try {
             // 读取上传的数据库文件
             String dbName = userId + "_" + taskId + ".db";
-            Path path = Paths.get("transfer", "uploaded-files", dbName);
+            Path path = Paths.get("transfer", "uploaded_files", dbName);
             String url = "jdbc:sqlite:" + path.toString();
             SQLiteHelper sqLiteHelper = new SQLiteHelper(url);
             Map<String, Map<String, List<Object>>> dbData = sqLiteHelper.getAllTableData();
@@ -73,7 +73,7 @@ public class DataMasking {
 
             // 保存脱敏后的数据到新的数据库文件
             String maskedDbName = userId + "_" + taskId + "_masked.db";
-            Path maskedPath = Paths.get("transfer", "downloaded-files", maskedDbName);
+            Path maskedPath = Paths.get("transfer", "downloaded_files", maskedDbName);
             String maskedUrl = "jdbc:sqlite:" + maskedPath.toString();
             sqLiteHelper.createDatabaseWithSameStructure(maskedDbData, maskedUrl);
 
