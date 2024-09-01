@@ -7,7 +7,7 @@ import java.util.logging.Level;
 
 public class UserLog {
     private static final Logger logger = Logger.getLogger(UserLog.class.getName());
-    private static final String BASE_LOG_DIR = "user_logs/"; // 日志文件的基础目录
+    private static final String BASE_LOG_DIR = "transfer\\user_logs\\"; // 日志文件的基础目录
 
     // 初始化日志文件处理器
     static {
@@ -21,6 +21,7 @@ public class UserLog {
 
     /**
      * 将log文件名设置为 part1_part2_..._partN.log
+     * 
      * @param fileNamePart
      */
     public static void setLogFileName(String... fileNamePart) {
@@ -39,18 +40,6 @@ public class UserLog {
             logger.log(Level.SEVERE, "Failed to set log file path", e);
         }
     }
-
-    // public static void setLogFileName(String userId, String taskId) {
-    //     try {
-    //         for (Handler handler : logger.getHandlers()) {
-    //             logger.removeHandler(handler);
-    //         }
-    //         String logFilePath = BASE_LOG_DIR + userId + "_" + taskId + ".log";
-    //         setupLogger(logFilePath);
-    //     } catch (Exception e) {
-    //         logger.log(Level.SEVERE, "Failed to set log file path", e);
-    //     }
-    // }
 
     // 初始化日志处理器和格式化器
     private static void setupLogger(String logFilePath) throws Exception {

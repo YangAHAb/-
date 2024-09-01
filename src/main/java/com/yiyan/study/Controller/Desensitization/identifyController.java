@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Collections;
 
 @SpringBootApplication
 @Slf4j
@@ -33,7 +32,8 @@ public class identifyController {
             sum += (NeedIdentify.charAt(i) - '0') * WEIGHT[i];
         }
         if (CHECK_CODE[sum % 11] == NeedIdentify.charAt(17)) {
-            // DesensitizationDTO DX = com.yiyan.study.model.DesensitizationDTO.builder().idCardNum(NeedIdentify).build();
+            // DesensitizationDTO DX =
+            // com.yiyan.study.model.DesensitizationDTO.builder().idCardNum(NeedIdentify).build();
             return DesensitizedUtil.idCardNum(String.valueOf(NeedIdentify), 6, 4);
         } else
             return "illegal";
@@ -205,6 +205,73 @@ public class identifyController {
         return ans;
     }
 
+    public static String Encrypt(String sSrc, String sKey) throws Exception {
+        byte[] raw = sKey.getBytes("utf-8");
+        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");// "算法/模式/补码方式"
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+        byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
+        return Base64.getEncoder().encodeToString(encrypted);// 此处使用BASE64做转码功能，同时能起到2次加密的作用。
+    }
+
+    public static String Upset(String str) {
+        char[] arr = str.toCharArray();
+        Random r = new Random();
+        for (int i = 0; i < arr.length; i++) {
+            int index = r.nextInt(arr.length);
+            char temp = arr[i];
+            arr[i] = arr[index];
+            arr[index] = temp;
+        }
+        str = new String(arr);
+        return str;
+    }
+
+    public static String Des_idcard(String IDcard, int type) throws Exception {
+        if (type == 1)
+            return ISidcard(IDcard);
+        else if (type == 2)
+            return Encrypt(IDcard, "123456789!@#$%^&");
+        else
+            return Upset(IDcard);
+    }
+
+    public static String Des_phonenumber(String Phonenumber, int type) throws Exception {
+        if (type == 1)
+            return ISphonenumber(Phonenumber);
+        else if (type == 2)
+            return Encrypt(Phonenumber, "123456789!@#$%^&");
+        else
+            return Upset(Phonenumber);
+    }
+
+    public static String Des_Email(String email, int type) throws Exception {
+        if (type == 1)
+            return ISEmail(email);
+        else if (type == 2)
+            return Encrypt(email, "123456789!@#$%^&");
+        else
+            return Upset(email);
+    }
+
+    public static String Des_address(String Address, int type) throws Exception {
+        if (type == 1)
+            return ISaddress(Address);
+        else if (type == 2)
+            return Encrypt(Address, "123456789!@#$%^&");
+        else
+            return Upset(Address);
+    }
+
+    public static String Des_CardNumber(String CardNumber, int type) throws Exception {
+        if (type == 1)
+            return ISValidCardNumber(CardNumber);
+        else if (type == 2)
+            return Encrypt(CardNumber, "123456789!@#$%^&");
+        else
+            return Upset(CardNumber);
+    }
+
     public static boolean canMask(List<Object> list) {
         List<Double> percentage = maskTypePercentageList(list);
         int maxIdx = percentage.indexOf(Collections.max(percentage));
@@ -242,7 +309,7 @@ public class identifyController {
         return new ArrayList<Double>(List.of(percent0, percent1, percent2, percent3, percent4, percent5));
     }
 
-    public static List<Object> maskList(List<Object> list) {
+    public static List<Object> maskList(List<Object> list, int Destype) throws Exception {
         List<String> targetList = list.stream()
                 .map(Object::toString) // 将每个对象转换为字符串
                 .collect(Collectors.toList());
@@ -250,15 +317,15 @@ public class identifyController {
         for (String NeedId : targetList) {
             // System.out.println(NeedId);
             if (ISidcard(NeedId) != "illegal")
-                ans.add(ISidcard(NeedId));
+                ans.add(Des_idcard(NeedId, Destype));
             else if (ISphonenumber(NeedId) != "illegal")
-                ans.add(ISphonenumber(NeedId));
+                ans.add(Des_phonenumber(NeedId, Destype));
             else if (ISEmail(NeedId) != "illegal")
-                ans.add(ISEmail(NeedId));
+                ans.add(Des_Email(NeedId, Destype));
             else if (ISaddress(NeedId) != "illegal")
-                ans.add(ISaddress(NeedId));
+                ans.add(Des_address(NeedId, Destype));
             else if (ISValidCardNumber(NeedId) != "illegal")
-                ans.add(ISValidCardNumber(NeedId));
+                ans.add(Des_CardNumber(NeedId, Destype));
             else
                 ans.add(NeedId);
         }

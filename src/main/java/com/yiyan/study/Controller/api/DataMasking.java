@@ -116,12 +116,12 @@ public class DataMasking {
     }
 
     private List<Object> maskColumnData(List<Object> columnData) {
-        if (!identifyController.canMask(columnData))
+        try {
+            //TODO: 脱敏算法选择
+            return identifyController.maskList(columnData, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
             return columnData;
-
-        List<Object> ans = identifyController.maskList(columnData);
-
-        System.out.println(ans);
-        return ans;
+        }
     }
 }

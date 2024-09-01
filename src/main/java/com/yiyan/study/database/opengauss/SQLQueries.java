@@ -20,7 +20,7 @@ public class SQLQueries {
                     "file_id SERIAL PRIMARY KEY," +
                     "file_name VARCHAR(255)," +
                     "file_path VARCHAR(500)," +
-                    "file_type VARCHAR(20)," +
+                    "file_type VARCHAR(255)," +
                     "file_size INTEGER," +
                     "file_status VARCHAR(20)," +
                     "delete_flag BOOLEAN DEFAULT FALSE," +
