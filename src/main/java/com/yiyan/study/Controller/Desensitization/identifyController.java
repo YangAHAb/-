@@ -280,6 +280,11 @@ public class identifyController {
         return maxIdx == 0 ? false : true;
     }
 
+    public static Integer getColumnType(List<Object> list) {
+        List<Double> percentage = maskTypePercentageList(list);
+        return percentage.indexOf(Collections.max(percentage));
+    }
+
     public static List<Double> maskTypePercentageList(List<Object> list) {
         if (list.size() == 0) {
             return new ArrayList<Double>();

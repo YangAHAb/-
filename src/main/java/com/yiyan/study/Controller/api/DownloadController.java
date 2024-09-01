@@ -35,7 +35,7 @@ public class DownloadController {
         Path filePath = fileStorageLocation.resolve(fileName).normalize();
 
         // log
-        UserLog.setLogFileName(userId, taskId);
+        UserLog.setLogFileName(userId);
 
         // 确保文件存在
         if (!Files.exists(filePath)) {

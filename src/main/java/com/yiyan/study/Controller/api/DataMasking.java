@@ -9,7 +9,9 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +36,10 @@ public class DataMasking {
 
             // 数据库表中各个表的列名，以及这些列是否可以进行脱敏处理的标志
             Map<String, List<String>> columnNames = sqLiteHelper.getAllColumns();
-            Map<String, List<Boolean>> canMaskColumnNames = sqLiteHelper.getAllColumnsCanMask();
+            Map<String, List<Integer>> ColumnType = sqLiteHelper.getAllColumnsType();
+
+            System.out.println(columnNames);
+            System.out.println(ColumnType);
 
             // close db
             sqLiteHelper.close();
@@ -44,22 +49,36 @@ public class DataMasking {
             response.put("userId", userId);
             response.put("taskId", taskId);
             response.put("columnNames", columnNames);
-            response.put("canMaskColumnNames", canMaskColumnNames);
+            response.put("canMaskColumnNames", ColumnType);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.out.println("识别错误：" + e.getMessage());
+
             // 处理异常情况
             response.put("error", "识别任务失败: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
-    @GetMapping("/mask")
+    @RequestMapping(value = "/mask", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> mask(
-            @RequestParam("user_id") String userId,
-            @RequestParam("task_id") String taskId) {
+            @RequestBody Map<String, Object> requestBody) {
+        /**
+         * requestBody={
+         * user_id:
+         * task_id:
+         * rule:
+         * }
+         */
         Map<String, Object> response = new HashMap<>();
-        // 根据user_id和task_id开始脱敏
+        String userId = requestBody.get("user_id").toString();
+        String taskId = requestBody.get("task_id").toString();
+
+        @SuppressWarnings("unchecked")
+        Map<String, List<Integer>> rule = (Map<String, List<Integer>>) requestBody.get("rule");
+        System.out.println("rule:" + rule);
+
         try {
             // 读取上传的数据库文件
             String dbName = userId + "_" + taskId + ".db";
@@ -69,7 +88,7 @@ public class DataMasking {
             Map<String, Map<String, List<Object>>> dbData = sqLiteHelper.getAllTableData();
 
             // 脱敏处理
-            Map<String, Map<String, List<Object>>> maskedDbData = maskData(dbData);
+            Map<String, Map<String, List<Object>>> maskedDbData = maskData(dbData, rule);
 
             // 保存脱敏后的数据到新的数据库文件
             String maskedDbName = userId + "_" + taskId + "_masked.db";
@@ -94,31 +113,38 @@ public class DataMasking {
     }
 
     private Map<String, Map<String, List<Object>>> maskData(
-            Map<String, Map<String, List<Object>>> dbData) {
+            Map<String, Map<String, List<Object>>> dbData, Map<String, List<Integer>> rule) {
 
         Map<String, Map<String, List<Object>>> maskedDbData = new HashMap<>();
 
+        // db
         for (Map.Entry<String, Map<String, List<Object>>> tableEntry : dbData.entrySet()) {
+            // table
             String tableName = tableEntry.getKey();
             Map<String, List<Object>> tableData = tableEntry.getValue();
             Map<String, List<Object>> maskedTableData = new HashMap<>();
+            List<Integer> tableRule = rule.get(tableName);
+            // System.out.println("tableRule:" + tableRule);
 
+            int idx = 0;
             for (Map.Entry<String, List<Object>> columnEntry : tableData.entrySet()) {
+                // column
                 String columnName = columnEntry.getKey();
                 List<Object> columnData = columnEntry.getValue();
 
-                List<Object> maskedColumnData = maskColumnData(columnData);
+                List<Object> maskedColumnData = maskColumnData(columnData, tableRule.get(idx));
                 maskedTableData.put(columnName, maskedColumnData);
+                idx++;
             }
             maskedDbData.put(tableName, maskedTableData);
         }
         return maskedDbData;
     }
 
-    private List<Object> maskColumnData(List<Object> columnData) {
+    private List<Object> maskColumnData(List<Object> columnData, int type) {
+        // System.out.println("current rule:" + type);
         try {
-            //TODO: 脱敏算法选择
-            return identifyController.maskList(columnData, 1);
+            return identifyController.maskList(columnData, type);
         } catch (Exception e) {
             e.printStackTrace();
             return columnData;

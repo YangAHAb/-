@@ -220,6 +220,20 @@ public class SQLiteHelper {
         return allColumnsCanMask;
     }
 
+    public Map<String, List<Integer>> getAllColumnsType() {
+        Map<String, List<Integer>> allColumnsType = new HashMap<>();
+        Map<String, List<String>> allColumns = getAllColumns();
+
+        for (Map.Entry<String, List<String>> entry : allColumns.entrySet()) {
+            List<Integer> canMask = new ArrayList<>();
+            for (String column : entry.getValue()) {
+                canMask.add(identifyController.getColumnType(getColumnData(entry.getKey(), column)));
+            }
+            allColumnsType.put(entry.getKey(), canMask);
+        }
+        return allColumnsType;
+    }
+
     // 关闭连接
     public void close() {
         try {

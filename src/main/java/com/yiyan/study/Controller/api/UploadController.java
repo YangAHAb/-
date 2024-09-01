@@ -130,7 +130,7 @@ public class UploadController {
             String sql = "INSERT INTO file (file_name, file_path, file_type, file_size,file_status) VALUES (?, ?, ?, ?, ?)";
 
             // log
-            UserLog.setLogFileName(userId, taskId);
+            UserLog.setLogFileName(userId);
             UserLog.info(String.format("File upload: user %s uploads file %s in the task %s.", userId,
                     targetFileName, taskId));
 
