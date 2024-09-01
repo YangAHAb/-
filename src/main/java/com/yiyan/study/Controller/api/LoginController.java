@@ -1,4 +1,4 @@
-package com.yiyan.study.Controller.api;
+package com.yiyan.study.controller.api;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.yiyan.study.Controller.Desensitization.identifyController;
+import com.yiyan.study.controller.desensitization.identifyController;
 
 public class SQLiteHelper {
     private Connection connection;

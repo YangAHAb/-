@@ -1,4 +1,4 @@
-package com.yiyan.study.Controller.Desensitization;
+package com.yiyan.study.controller.desensitization;
 
 import cn.hutool.core.util.DesensitizedUtil;
 import lombok.extern.slf4j.Slf4j;

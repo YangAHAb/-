@@ -1,4 +1,4 @@
-package com.yiyan.study.Controller.Desensitization;
+package com.yiyan.study.controller.desensitization;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

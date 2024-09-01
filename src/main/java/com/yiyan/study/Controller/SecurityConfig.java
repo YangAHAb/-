@@ -1,4 +1,4 @@
-package com.yiyan.study.Controller;
+package com.yiyan.study.controller;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.yiyan.study.Controller.api;
+package com.yiyan.study.controller.api;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.yiyan.study.Controller.Desensitization.identifyController;
+import com.yiyan.study.controller.desensitization.identifyController;
 import com.yiyan.study.database.sqlite.SQLiteHelper;
 
 @RestController
