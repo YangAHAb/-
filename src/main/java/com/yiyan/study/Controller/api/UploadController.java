@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -105,52 +106,88 @@ public class UploadController {
 
     // 文件和其他数据上传接口
     @PostMapping("/uploadWithData")
-    public ResponseEntity<Map<String, Object>> uploadFileWithData(@RequestParam("file") MultipartFile file,
-            @RequestParam("user_id") String userId, @RequestParam("task_id") String taskId) throws IOException {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            // 生成唯一文件名
-            // String originalFileName = file.getOriginalFilename();
-            // String uniqueFileName = UUID.randomUUID().toString() + "_" +
-            // originalFileName;
-            // Path targetLocation = fileStorageLocation.resolve(uniqueFileName);
-            String targetFileName = file.getOriginalFilename();
-            Path targetLocation = fileStorageLocation.resolve(targetFileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+public ResponseEntity<Map<String, Object>> uploadFileWithData(@RequestParam("file") MultipartFile file,@RequestParam("user_id") String userId) throws IOException {
+    Map<String, Object> response = new HashMap<>();
+    Connection conn = null;
+    try {
+        // 生成唯一文件名
+        String targetFileName = file.getOriginalFilename();
+        Path targetLocation = fileStorageLocation.resolve(targetFileName);
+        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            // 获取文件信息
-            String filePath = targetLocation.toString();
-            String fileType = Files.probeContentType(targetLocation);
-            long fileSize = file.getSize();
+        // 获取文件信息
+        String filePath = targetLocation.toString();
+        String fileType = Files.probeContentType(targetLocation);
+        long fileSize = file.getSize();
 
-            System.out.println("fileType:" + fileType);
+        // 日志记录
+//        UserLog.setLogFileName(userId, taskId);
+//        UserLog.info(String.format("File upload: user %s uploads file %s in the task %s.", userId, targetFileName, taskId));
 
-            // 插入文件信息到数据库
-            String sql = "INSERT INTO file (file_name, file_path, file_type, file_size,file_status) VALUES (?, ?, ?, ?, ?)";
+        // 插入文件信息和新建任务信息到数据库
+        conn = opengaussHelper.getConnection();
+        conn.setAutoCommit(false); // 启用事务
 
-            // log
-            UserLog.setLogFileName(userId, taskId);
-            UserLog.info(String.format("File upload: user %s uploads file %s in the task %s.", userId,
-                    targetFileName, taskId));
+        // 插入文件信息到 file 表
+        String fileInsertSql = "INSERT INTO file (file_name, file_path, file_type, file_size, file_status, creater_id) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmtFile = conn.prepareStatement(fileInsertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            pstmtFile.setString(1, targetFileName);
+            pstmtFile.setString(2, filePath);
+            pstmtFile.setString(3, fileType);
+            pstmtFile.setLong(4, fileSize);
+            pstmtFile.setString(5, "uploaded");
+            pstmtFile.setInt(6, Integer.parseInt(userId)); // 假设user_id是整数类型
+            pstmtFile.executeUpdate();
 
-            try (Connection conn = opengaussHelper.getConnection();
-                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, targetFileName);
-                pstmt.setString(2, filePath);
-                pstmt.setString(3, fileType);
-                pstmt.setLong(4, fileSize);
-                pstmt.setString(5, "uploaded");
-                pstmt.executeUpdate();
+            // 获取生成的 file_id
+            try (ResultSet generatedKeys = pstmtFile.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int fileId = generatedKeys.getInt(1);
+
+                    // 插入任务信息到 desen_task 表
+                    String taskInsertSql = "INSERT INTO desen_task (file_id, rule_id, task_status, start_time, creater_id) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
+                    try (PreparedStatement pstmtTask = conn.prepareStatement(taskInsertSql)) {
+                        pstmtTask.setInt(1, fileId);
+                        pstmtTask.setString(2, "default_rule"); // 任务规则ID, 你可以根据需要修改
+                        pstmtTask.setString(3, "pending"); // 任务状态
+                        pstmtTask.setInt(4, Integer.parseInt(userId)); // 任务创建者ID
+                        pstmtTask.executeUpdate();
+                    }
+                } else {
+                    throw new SQLException("Failed to retrieve file_id.");
+                }
             }
-
-            response.put("status", "success");
-            response.put("message", "File uploaded successfully");
-            response.put("filename", targetFileName);
-        } catch (IOException | SQLException e) {
-            // } catch (IOException e) {
-            response.put("status", "error");
-            response.put("message", "Failed to upload file: " + e.getMessage());
         }
-        return ResponseEntity.ok(response);
+
+        conn.commit(); // 提交事务
+
+        response.put("status", "success");
+        response.put("message", "File and task created successfully");
+        response.put("filename", targetFileName);
+    } catch (IOException | SQLException e) {
+        if (conn != null) {
+            try {
+                conn.rollback(); // 回滚事务
+            } catch (SQLException ex) {
+                response.put("status", "error");
+                response.put("message", "Failed to rollback transaction: " + ex.getMessage());
+                return ResponseEntity.ok(response);
+            }
+        }
+        response.put("status", "error");
+        response.put("message", "Failed to upload file and create task: " + e.getMessage());
+    } finally {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
+                response.put("status", "error");
+                response.put("message", "Failed to close connection: " + e.getMessage());
+            }
+        }
     }
+    return ResponseEntity.ok(response);
+}
+
 }

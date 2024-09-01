@@ -42,6 +42,20 @@ public class SQLQueries {
                     "update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                     "creater_id INTEGER," +
                     "updater_id INTEGER" +
-                    ");"
+                    ");",
+        "CREATE TABLE IF NOT EXISTS desen_result ("+
+        "result_id SERIAL PRIMARY KEY,"+
+        "task_id INTEGER NOT NULL,"+
+        "report_file_id INTEGER,"+
+        "desen_file_id INTEGER,"+
+        "delete_flag BOOLEAN DEFAULT FALSE,"+
+        "create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+        "update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+        "creater_id INTEGER,"+
+        "updater_id INTEGER"+
+        //     "FOREIGN KEY (task_id) REFERENCES desen_task(task_id),"+
+        //     "FOREIGN KEY (report_file_id) REFERENCES file(file_id),"+
+        //     "FOREIGN KEY (desen_file_id) REFERENCES file(file_id)"+
+        ");"
     };
 }
