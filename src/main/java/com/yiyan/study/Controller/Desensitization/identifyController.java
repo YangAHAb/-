@@ -90,6 +90,8 @@ public class identifyController {
     @RequestMapping("/address")
     private static String ISaddress(String NeedIdentify) {
         int n = NeedIdentify.length();
+        if (n < 4)
+            return "illegal";
         int flag = -1;
         char a = NeedIdentify.charAt(0), b = NeedIdentify.charAt(1), c = NeedIdentify.charAt(2),
                 d = NeedIdentify.charAt(3);
