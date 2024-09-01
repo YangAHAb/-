@@ -1,6 +1,7 @@
 package com.yiyan.study.utils.userlogutil;
 
 import java.util.logging.Logger;
+import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -12,8 +13,12 @@ public class UserLog {
     // 初始化日志文件处理器
     static {
         try {
-            String logFilePath = BASE_LOG_DIR + "default.log";
-            setupLogger(logFilePath);
+            File logDirectory = new File(BASE_LOG_DIR);
+            if (!logDirectory.exists()) {
+                if (!logDirectory.mkdirs()) {
+                    throw new Exception("Failed to create log directory: " + BASE_LOG_DIR);
+                }
+            }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to setup logger", e);
         }

@@ -114,7 +114,8 @@ public class UploadController {
             // String uniqueFileName = UUID.randomUUID().toString() + "_" +
             // originalFileName;
             // Path targetLocation = fileStorageLocation.resolve(uniqueFileName);
-            String targetFileName = file.getOriginalFilename();
+
+            String targetFileName = userId + "_" + taskId + ".db";
             Path targetLocation = fileStorageLocation.resolve(targetFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
