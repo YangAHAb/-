@@ -1,13 +1,10 @@
 <script setup>
+import MenuBar from './MenuBar.vue';
 import { onMounted, ref } from 'vue'
-import router from './router';
-const activeIndex = ref('/main')
-function handleSelect(index) {
-    activeIndex.value = index
-}
+import router from './router/router';
 
 onMounted(() => {
-    router.push("/main")
+    router.push("/login")
 })  
 </script>
 
@@ -16,21 +13,9 @@ onMounted(() => {
         <el-container style="height: 100vh">
             <!-- LOGO 网站名称 菜单 -->
             <div class="logo-container">
-                <img src="/public/logo.png" alt="Logo" class="logo">
+                <img src="/logo.png" alt="Logo" class="logo">
                 <h1 class="site-name">数据脱敏管理平台</h1>
             </div>
-            <el-header class="logo-header">
-                <el-menu :default-active="activeIndex" class="main-header-menu" mode="horizontal" @select="handleSelect"
-                    router>
-                    <el-menu-item index="/main">首页</el-menu-item>  
-                    <el-menu-item index="/upload">数据文件上传</el-menu-item> 
-                    <el-menu-item index="/identification">敏感数据识别</el-menu-item>
-                    <el-menu-item index="/mask">数据脱敏结果</el-menu-item> 
-                    <el-menu-item index="/login">账户</el-menu-item>
-
-                </el-menu>
-            </el-header>
-
             <el-main>
                 <RouterView />
             </el-main>
@@ -44,7 +29,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 10px;
+    padding: 5px;
     background-color: #282c34;
     /*背景*/
 }
@@ -68,28 +53,6 @@ onMounted(() => {
     margin-left: 10px;
 }
 
-
-/* 菜单项样式 */
-.el-menu-item {
-    font-size: 16px;
-    margin: 0 50px;
-    /* 菜单项之间的间距 */
-    transition: background-color 0.3s, color 0.3s;
-    /* 平滑过渡效果 */
-}
-
-/* 菜单激活样式 */
-.el-menu-item.is-active {
-    background-color: rgba(64, 158, 255, 0.2);
-    color: #409eff;
-}
-
-/* 菜单悬停样式 */
-.el-menu-item:hover {
-    color: #fff;
-}
-
-
 /* footer样式 */
 .el-footer {
     /* 背景色*/
@@ -111,4 +74,8 @@ onMounted(() => {
     /* 边框样式*/
     border-top: 1px solid #444;
 }
+.RouterView {
+    height: 100%;
+}
+
 </style>

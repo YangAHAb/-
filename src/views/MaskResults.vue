@@ -27,15 +27,15 @@ const ruleData = computed(() => {
 const algorithmOptions = [
     {
         value: 1,
-        label: '脱敏算法1',
+        label: '特殊字符覆盖',
     },
     {
         value: 2,
-        label: '脱敏算法2',
+        label: '加密',
     },
     {
         value: 3,
-        label: '脱敏算法3',
+        label: '随机置乱',
     },
 ]
 

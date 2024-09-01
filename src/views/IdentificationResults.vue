@@ -84,24 +84,24 @@ const handleGetIdentification = async () => {
 }
 
 onMounted(() => {
-    tableData.value = [
-        {
-            database: 'testDB',
-            table: 'testTable',
-            column: 'testColumn',
-            algorithm: 1,
-            state: true,
-            status: true,
-        },
-        {
-            database: 'testDB2',
-            table: 'testTable2',
-            column: 'testColumn2',
-            algorithm: 2,
-            state: false,
-            status: false,
-        }
-    ]
+    // tableData.value = [
+    //     {
+    //         database: 'testDB',
+    //         table: 'testTable',
+    //         column: 'testColumn',
+    //         algorithm: 1,
+    //         state: true,
+    //         status: true,
+    //     },
+    //     {
+    //         database: 'testDB2',
+    //         table: 'testTable2',
+    //         column: 'testColumn2',
+    //         algorithm: 2,
+    //         state: false,
+    //         status: false,
+    //     }
+    // ]
     store.setIdentificationResults(tableData.value);
 })
 
