@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yiyan.study.controller.desensitization.identifyController;
 import com.yiyan.study.database.sqlite.SQLiteHelper;
+import com.yiyan.study.utils.userlogutil.UserLog;
 
 @RestController
 @RequestMapping("/api")
@@ -40,6 +41,11 @@ public class DataMasking {
 
             System.out.println(columnNames);
             System.out.println(ColumnType);
+
+            // log
+            UserLog.setLogFileName(userId);
+            UserLog.info(String.format("Identify: user %s identifies file %s in the task %s.", userId,
+                    dbName, taskId));
 
             // close db
             sqLiteHelper.close();
@@ -95,6 +101,11 @@ public class DataMasking {
             Path maskedPath = Paths.get("transfer", "downloaded_files", maskedDbName);
             String maskedUrl = "jdbc:sqlite:" + maskedPath.toString();
             sqLiteHelper.createDatabaseWithSameStructure(maskedDbData, maskedUrl);
+
+            // log
+            UserLog.setLogFileName(userId);
+            UserLog.info(String.format("Mask: user %s masks file %s in the task %s, result stored as %s.", userId,
+                    dbName, taskId, maskedDbName));
 
             // close db
             sqLiteHelper.close();

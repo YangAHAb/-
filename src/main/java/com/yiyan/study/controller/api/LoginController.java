@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yiyan.study.database.opengauss.OpengaussHelper;
+import com.yiyan.study.utils.userlogutil.UserLog;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,8 +41,8 @@ public class LoginController {
         String insertUserSql = "INSERT INTO \"user\" (username, password) VALUES (?, ?)";
 
         try (Connection conn = opengaussHelper.getConnection();
-             PreparedStatement checkUserStmt = conn.prepareStatement(checkUserSql);
-             PreparedStatement insertUserStmt = conn.prepareStatement(insertUserSql)) {
+                PreparedStatement checkUserStmt = conn.prepareStatement(checkUserSql);
+                PreparedStatement insertUserStmt = conn.prepareStatement(insertUserSql)) {
 
             checkUserStmt.setString(1, username);
             ResultSet rs = checkUserStmt.executeQuery();
@@ -57,6 +58,11 @@ public class LoginController {
             if (result > 0) {
                 response.put("status", "success");
                 response.put("message", "注册成功！");
+
+                // log
+                UserLog.setLogFileName(username);
+                UserLog.info(String.format("Registeration success. user id: %s", username));
+
             } else {
                 response.put("status", "error");
                 response.put("message", "注册失败！");
@@ -87,6 +93,11 @@ public class LoginController {
                 if (passwordEncoder.matches(password, storedPassword)) {
                     response.put("status", "success");
                     response.put("message", "登录成功！");
+
+                    // log
+                    UserLog.setLogFileName(username);
+                    UserLog.info(String.format("Login success. user id: %s", username));
+
                 } else {
                     response.put("status", "error");
                     response.put("message", "密码错误！");

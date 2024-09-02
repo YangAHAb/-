@@ -31,9 +31,6 @@ public class UserLog {
      */
     public static void setLogFileName(String... fileNamePart) {
         try {
-            for (Handler handler : logger.getHandlers()) {
-                logger.removeHandler(handler);
-            }
             String logFilePath = BASE_LOG_DIR;
             for (int i = 0; i < fileNamePart.length - 1; i++) {
                 logFilePath += fileNamePart[i] + "_";
@@ -48,30 +45,43 @@ public class UserLog {
 
     // 初始化日志处理器和格式化器
     private static void setupLogger(String logFilePath) throws Exception {
+        closeHandles();
         FileHandler fileHandler = new FileHandler(logFilePath, true);
         fileHandler.setFormatter(new UserLogFormatter());
         logger.addHandler(fileHandler);
         logger.setLevel(Level.ALL);
     }
 
+    private static void closeHandles() {
+        for (Handler handler : logger.getHandlers()) {
+            handler.close();
+            logger.removeHandler(handler);
+        }
+    }
+
     // 记录日志信息
     public static void log(Level level, String msg) {
         logger.log(level, msg);
+        closeHandles();
     }
 
     public static void finest(String msg) {
         logger.finest(msg);
+        closeHandles();
     }
 
     public static void info(String msg) {
         logger.info(msg);
+        closeHandles();
     }
 
     public static void warning(String msg) {
         logger.warning(msg);
+        closeHandles();
     }
 
     public static void severe(String msg) {
         logger.severe(msg);
+        closeHandles();
     }
 }
