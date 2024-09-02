@@ -47,6 +47,7 @@ public class DownloadController {
         UserLog.info(String.format(
                 "File download: user %s downloads file %s in the task %s.", userId, filePath,
                 taskId));
+        UserLog.endLog();
 
         Resource resource = new UrlResource(filePath.toUri());
         return ResponseEntity.ok()

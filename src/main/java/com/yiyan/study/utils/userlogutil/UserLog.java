@@ -5,18 +5,22 @@ import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class UserLog {
     private static final Logger logger = Logger.getLogger(UserLog.class.getName());
-    private static final String BASE_LOG_DIR = "transfer\\user_logs\\"; // 日志文件的基础目录
+    // private static final String BASE_LOG_DIR = "transfer\\user_logs\\"; //
+    // 日志文件的基础目录
+    private static final Path baseLogDir = Paths.get("transfer", "user_logs");
 
     // 初始化日志文件处理器
     static {
         try {
-            File logDirectory = new File(BASE_LOG_DIR);
+            File logDirectory = baseLogDir.toFile();
             if (!logDirectory.exists()) {
                 if (!logDirectory.mkdirs()) {
-                    throw new Exception("Failed to create log directory: " + BASE_LOG_DIR);
+                    throw new Exception("Failed to create log directory: " + baseLogDir);
                 }
             }
         } catch (Exception e) {
@@ -31,13 +35,15 @@ public class UserLog {
      */
     public static void setLogFileName(String... fileNamePart) {
         try {
-            String logFilePath = BASE_LOG_DIR;
+            // String logFilePath = BASE_LOG_DIR;
+            String fileName = "";
             for (int i = 0; i < fileNamePart.length - 1; i++) {
-                logFilePath += fileNamePart[i] + "_";
+                fileName += fileNamePart[i] + "_";
             }
-            logFilePath += fileNamePart[fileNamePart.length - 1] + ".log";
+            fileName += fileNamePart[fileNamePart.length - 1] + ".log";
 
-            setupLogger(logFilePath);
+            Path logFilePath = baseLogDir.resolve(fileName);
+            setupLogger(logFilePath.toString());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to set log file path", e);
         }
@@ -59,29 +65,28 @@ public class UserLog {
         }
     }
 
+    public static void endLog() {
+        closeHandles();
+    }
+
     // 记录日志信息
     public static void log(Level level, String msg) {
         logger.log(level, msg);
-        closeHandles();
     }
 
     public static void finest(String msg) {
         logger.finest(msg);
-        closeHandles();
     }
 
     public static void info(String msg) {
         logger.info(msg);
-        closeHandles();
     }
 
     public static void warning(String msg) {
         logger.warning(msg);
-        closeHandles();
     }
 
     public static void severe(String msg) {
         logger.severe(msg);
-        closeHandles();
     }
 }

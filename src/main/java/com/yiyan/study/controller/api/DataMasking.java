@@ -46,6 +46,7 @@ public class DataMasking {
             UserLog.setLogFileName(userId);
             UserLog.info(String.format("Identify: user %s identifies file %s in the task %s.", userId,
                     dbName, taskId));
+            UserLog.endLog();
 
             // close db
             sqLiteHelper.close();
@@ -106,6 +107,7 @@ public class DataMasking {
             UserLog.setLogFileName(userId);
             UserLog.info(String.format("Mask: user %s masks file %s in the task %s, result stored as %s.", userId,
                     dbName, taskId, maskedDbName));
+            UserLog.endLog();
 
             // close db
             sqLiteHelper.close();

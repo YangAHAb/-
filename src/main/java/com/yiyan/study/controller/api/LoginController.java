@@ -62,6 +62,7 @@ public class LoginController {
                 // log
                 UserLog.setLogFileName(username);
                 UserLog.info(String.format("Registeration success. user id: %s", username));
+                UserLog.endLog();
 
             } else {
                 response.put("status", "error");
@@ -97,6 +98,7 @@ public class LoginController {
                     // log
                     UserLog.setLogFileName(username);
                     UserLog.info(String.format("Login success. user id: %s", username));
+                    UserLog.endLog();
 
                 } else {
                     response.put("status", "error");

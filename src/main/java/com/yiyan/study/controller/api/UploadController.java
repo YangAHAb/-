@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.yiyan.study.database.opengauss.OpengaussHelper;
 import com.yiyan.study.utils.userlogutil.UserLog;
 
@@ -133,6 +134,7 @@ public class UploadController {
             UserLog.setLogFileName(userId);
             UserLog.info(String.format("File upload: user %s uploads file %s in the task %s.", userId,
                     targetFileName, taskId));
+            UserLog.endLog();
 
             try (Connection conn = opengaussHelper.getConnection();
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
