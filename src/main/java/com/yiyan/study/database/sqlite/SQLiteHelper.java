@@ -1,5 +1,6 @@
 package com.yiyan.study.database.sqlite;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -113,31 +114,43 @@ public class SQLiteHelper {
         return allTablesData;
     }
 
-    // 创建新数据库并复制表结构和数据
-    // newDatabaseUrl = "jdbc:sqlite:/path/to/new_database.db";
     public void createDatabaseWithSameStructure(Map<String, Map<String, List<Object>>> newDatabaseData,
             String newDatabaseUrl) {
-        try (Connection newConnection = DriverManager.getConnection(newDatabaseUrl)) {
-            if (newConnection != null) {
-                System.out.println("新数据库创建成功。");
+        try {
+            // 检查并删除已有同名数据库文件
+            File dbFile = new File(newDatabaseUrl.replace("jdbc:sqlite:", ""));
+            if (dbFile.exists()) {
+                if (dbFile.delete()) {
+                    System.out.println("已有的同名数据库文件已被删除。");
+                } else {
+                    System.out.println("无法删除已有的数据库文件。");
+                    return;
+                }
+            }
 
-                // 获取所有表
-                List<String> tables = getAllTables();
+            // 指定连接字符串，并且设置create=true来创建新数据库并覆盖同名文件
+            String connectionString = newDatabaseUrl;
+            try (Connection newConnection = DriverManager.getConnection(connectionString)) {
+                if (newConnection != null) {
+                    System.out.println("新数据库创建成功。");
 
-                for (String table : tables) {
-                    // 获取表结构
-                    String createTableSQL = getCreateTableSQL(table);
-                    if (createTableSQL != null) {
-                        // 在新数据库中创建表
-                        try (Statement stmt = newConnection.createStatement()) {
-                            stmt.execute(createTableSQL);
-                            System.out.println("表 " + table + " 创建成功。");
+                    // 获取所有表
+                    List<String> tables = getAllTables();
+
+                    for (String table : tables) {
+                        // 获取表结构
+                        String createTableSQL = getCreateTableSQL(table);
+                        if (createTableSQL != null) {
+                            // 在新数据库中创建表
+                            try (Statement stmt = newConnection.createStatement()) {
+                                stmt.execute(createTableSQL);
+                                System.out.println("表 " + table + " 创建成功。");
+                            }
                         }
 
+                        copyTableData(newDatabaseData.get(table), table, newConnection);
+                        System.out.println("表 " + table + " 数据复制成功。");
                     }
-
-                    copyTableData(newDatabaseData.get(table), table, newConnection);
-                    System.out.println("表 " + table + " 数据复制成功。");
                 }
             }
         } catch (SQLException e) {

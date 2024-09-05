@@ -317,6 +317,9 @@ public class identifyController {
     }
 
     public static List<Object> maskList(List<Object> list, int Destype) throws Exception {
+        if (Destype == -1)
+            return list;
+
         List<String> targetList = list.stream()
                 .map(Object::toString) // 将每个对象转换为字符串
                 .collect(Collectors.toList());

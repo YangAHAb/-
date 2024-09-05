@@ -10,8 +10,6 @@ import java.nio.file.Paths;
 
 public class UserLog {
     private static final Logger logger = Logger.getLogger(UserLog.class.getName());
-    // private static final String BASE_LOG_DIR = "transfer\\user_logs\\"; //
-    // 日志文件的基础目录
     private static final Path baseLogDir = Paths.get("transfer", "user_logs");
 
     // 初始化日志文件处理器
@@ -35,7 +33,6 @@ public class UserLog {
      */
     public static void setLogFileName(String... fileNamePart) {
         try {
-            // String logFilePath = BASE_LOG_DIR;
             String fileName = "";
             for (int i = 0; i < fileNamePart.length - 1; i++) {
                 fileName += fileNamePart[i] + "_";

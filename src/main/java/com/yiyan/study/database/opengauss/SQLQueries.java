@@ -32,6 +32,7 @@ public class SQLQueries {
 
             "CREATE TABLE IF NOT EXISTS desen_task (" +
                     "task_id SERIAL PRIMARY KEY," +
+                    "task_type VARCHAR(20)," +
                     "file_id INTEGER REFERENCES file(file_id)," +
                     "rule_id VARCHAR(50)," +
                     "task_status VARCHAR(20)," +
