@@ -68,7 +68,8 @@ const handleChange = (file: any) => {
         dbOutput.value = `Error: ${error.message}`;
     }
  
-    fileName.value = file.raw.name; 
+    fileName.value = file.raw.name;
+    fileContent.value = file.raw; 
 };
 
 const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {  
