@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SpringBootApplication
 @Slf4j
@@ -317,27 +316,36 @@ public class identifyController {
     }
 
     public static List<Object> maskList(List<Object> list, int Destype) throws Exception {
+        System.out.println("masking list. Destype: " + Destype);
+        System.out.println("column type: " + getColumnType(list));
         if (Destype == -1)
             return list;
 
-        List<String> targetList = list.stream()
-                .map(Object::toString) // 将每个对象转换为字符串
-                .collect(Collectors.toList());
+        // List<String> targetList = list.stream()
+        // .map(Object::toString) // 将每个对象转换为字符串
+        // .collect(Collectors.toList());
         List<String> ans = new ArrayList<>();
-        for (String NeedId : targetList) {
-            // System.out.println(NeedId);
-            if (ISidcard(NeedId) != "illegal")
-                ans.add(Des_idcard(NeedId, Destype));
-            else if (ISphonenumber(NeedId) != "illegal")
-                ans.add(Des_phonenumber(NeedId, Destype));
-            else if (ISEmail(NeedId) != "illegal")
-                ans.add(Des_Email(NeedId, Destype));
-            else if (ISaddress(NeedId) != "illegal")
-                ans.add(Des_address(NeedId, Destype));
-            else if (ISValidCardNumber(NeedId) != "illegal")
-                ans.add(Des_CardNumber(NeedId, Destype));
-            else
-                ans.add(NeedId);
+        for (Object obj : list) {
+            String str = (String) obj;
+
+            if (ISidcard(str) != "illegal")
+                ans.add(Des_idcard(str, Destype));
+                // ans.add("id_card");
+            else if (ISphonenumber(str) != "illegal")
+                ans.add(Des_phonenumber(str, Destype));
+                // ans.add("phone_number");
+            else if (ISEmail(str) != "illegal")
+                ans.add(Des_Email(str, Destype));
+                // ans.add("email");
+            else if (ISaddress(str) != "illegal")
+                ans.add(Des_address(str, Destype));
+                // ans.add("address");
+            else if (ISValidCardNumber(str) != "illegal") {
+                ans.add(Des_CardNumber(str, Destype));
+                // System.out.println("masking bankcard:." + str);
+                // ans.add("bank_card");
+            } else
+                ans.add(str);
         }
         return new ArrayList<>(ans);
     }

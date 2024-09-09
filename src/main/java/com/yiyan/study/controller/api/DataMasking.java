@@ -85,6 +85,9 @@ public class DataMasking {
         @SuppressWarnings("unchecked")
         Map<String, List<Integer>> rule = (Map<String, List<Integer>>) requestBody.get("rule");
         System.out.println("rule:" + rule);
+        @SuppressWarnings("unchecked")
+        Map<String, List<String>> columnNames = (Map<String, List<String>>) requestBody.get("columnNames");
+        System.out.println("columnNames:" + columnNames);
 
         try {
             // 读取上传的数据库文件
@@ -95,7 +98,7 @@ public class DataMasking {
             Map<String, Map<String, List<Object>>> dbData = sqLiteHelper.getAllTableData();
 
             // 脱敏处理
-            Map<String, Map<String, List<Object>>> maskedDbData = maskData(dbData, rule);
+            Map<String, Map<String, List<Object>>> maskedDbData = maskData(dbData, rule, columnNames);
 
             // 保存脱敏后的数据到新的数据库文件
             String maskedDbName = userId + "_" + taskId + "_masked.db";
@@ -126,7 +129,9 @@ public class DataMasking {
     }
 
     private Map<String, Map<String, List<Object>>> maskData(
-            Map<String, Map<String, List<Object>>> dbData, Map<String, List<Integer>> rule) {
+            Map<String, Map<String, List<Object>>> dbData,
+            Map<String, List<Integer>> rule,
+            Map<String, List<String>> columnNames) {
 
         Map<String, Map<String, List<Object>>> maskedDbData = new HashMap<>();
 
@@ -137,17 +142,19 @@ public class DataMasking {
             Map<String, List<Object>> tableData = tableEntry.getValue();
             Map<String, List<Object>> maskedTableData = new HashMap<>();
             List<Integer> tableRule = rule.get(tableName);
+            List<String> columns = columnNames.get(tableName);
             // System.out.println("tableRule:" + tableRule);
 
-            int idx = 0;
+            // int idx = 0;
             for (Map.Entry<String, List<Object>> columnEntry : tableData.entrySet()) {
                 // column
                 String columnName = columnEntry.getKey();
                 List<Object> columnData = columnEntry.getValue();
 
+                int idx = columns.indexOf(columnName);
                 List<Object> maskedColumnData = maskColumnData(columnData, tableRule.get(idx));
                 maskedTableData.put(columnName, maskedColumnData);
-                idx++;
+                // idx++;
             }
             maskedDbData.put(tableName, maskedTableData);
         }
