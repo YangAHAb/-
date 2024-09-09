@@ -1,11 +1,33 @@
 <script setup>
 import MenuBar from '../MenuBar.vue';
 import { downloadFile } from '@/service/request';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { get, post } from '@/service/request';
 import { store } from '@/main';
 import tasklist from '../tasklist.vue';
-import { useTaskStore } from '@/store/taskStore';   
+import { useTaskStore } from '@/store/taskStore';
+
+
+import { use } from 'echarts/core';
+import { PieChart } from 'echarts/charts';
+import {
+	TitleComponent,
+	TooltipComponent,
+	LegendComponent
+} from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+import VChart from 'vue-echarts';
+
+use([
+	TitleComponent,
+	TooltipComponent,
+	LegendComponent,
+	PieChart,
+	CanvasRenderer
+]);
+// ref:https://vue-echarts.dev/#codegen
+
+
 const taskStore = useTaskStore();
 
 const tableData = ref([])
@@ -28,20 +50,137 @@ const showTableData = computed(() => {
     return newTable;
 })
 
-const algorithmOptions = [
-    {
-        value: 1,
-        label: '脱敏算法1',
+// 图表相关
+const allChartData = computed(() => {
+    let data = [
+        { value: 0, name: '敏感' },
+        { value: 0, name: '不敏感'}
+    ];
+    for(let item of showTableData.value) {
+        for(let e of data) {
+            if(item.status === e.name)
+                e.value++;
+        }
+    }
+    return data;
+})
+
+const tableNameOpt = ref('');  
+const tableNames = computed(() => {
+    let nameArray = []
+    
+    for(let item of showTableData.value) {
+        let flag = 0;
+        if(nameArray.length === 0) {
+            nameArray.push({value:item.table, label:item.table});
+        }
+        for(let e of nameArray) {
+            if(item.table === e.value) {
+                flag = 1;
+                break;
+            }
+        }
+        if(!flag) {
+            nameArray.push({value:item.table, label:item.table});
+        }
+    }
+    return nameArray;
+})
+
+// 数据库表选择下拉框
+const handleTableSelectChange = async (value) => {
+    let data = [
+        { value: 0, name: '敏感' },
+        { value: 0, name: '不敏感'}
+    ];
+    for(let item of showTableData.value) {
+        if(item.table === value){
+            for(let e of data) {
+                if(item.status === e.name)
+                    e.value++;
+            }
+        }
+    }
+    singleChartOption.value.series[0].data = data;
+    singleChartOption.value.title.text = `${value}敏感数据分布`;
+}
+
+const allChartOption = ref({
+    title: {
+        text: '数据库敏感数据分布'
     },
-    {
-        value: 2,
-        label: '脱敏算法2',
+    tooltip: {
+        trigger: 'item'
     },
-    {
-        value: 3,
-        label: '脱敏算法3',
+    legend: {
+        top: '5%',
+        left: 'center'
     },
-]
+    series: [
+        {
+            name: '敏感情况',
+            type: 'pie',
+            radius: ['55%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: 40,
+                    fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
+            data: allChartData.value
+        }
+    ]
+})
+
+const singleChartOption = ref({
+    title: {
+        text: '数据库敏感信息分布'
+    },
+    tooltip: {
+        trigger: 'item'
+    },
+    legend: {
+        top: '5%',
+        left: 'center'
+    },
+    series: [
+        {
+            name: '敏感情况',
+            type: 'pie',
+            radius: ['55%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: 40,
+                    fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
+            data: [],
+        }
+    ]
+})
+
+// 监听
+watch(allChartData, (newVal) => {
+    allChartOption.value.series[0].data = newVal;
+}, { deep: true });
 
 const userId = 123;
 const taskId = 456;
@@ -81,7 +220,24 @@ const handleGetIdentification = async () => {
 }
 
 onMounted(() => {
-
+    // tableData.value = [
+    //     {
+    //         database: 'testDB',
+    //         table: 'testTable',
+    //         column: 'testColumn',
+    //         algorithm: 1,
+    //         state: true,
+    //         status: true,
+    //     },
+    //     {
+    //         database: 'testDB2',
+    //         table: 'testTable2',
+    //         column: 'testColumn2',
+    //         algorithm: 2,
+    //         state: false,
+    //         status: false,
+    //     }
+    // ]
     store.setIdentificationResults(tableData.value);
 })
 
@@ -91,8 +247,24 @@ onMounted(() => {
     <MenuBar />
     <el-container>
         <el-main>
+            <el-row v-if="showTableData.length > 0">
+                <el-col :span="12">
+                    <v-chart class="chart" :option="allChartOption" autoresize />
+                </el-col>
+                <el-col :span="12">
+                    <el-select v-model="tableNameOpt" placeholder="--请选择--" style="width: 50%" @change="handleTableSelectChange">
+                        <el-option
+                            v-for="item in tableNames"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                    <v-chart class="chart" :option="singleChartOption" autoresize />
+                </el-col>
+            </el-row>
             <el-row>
-                <el-table :data="showTableData">
+                <el-table :data="showTableData" max-height="400">
                     <el-table-column prop="database" label="数据库" />
                     <el-table-column prop="table" label="表" />
                     <el-table-column prop="column" label="列" />
@@ -109,4 +281,8 @@ onMounted(() => {
     </el-container>
 </template>
 
-<style scoped></style>
+<style scoped>
+.chart {
+  height: 300px;
+}
+</style>

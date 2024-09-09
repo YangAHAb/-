@@ -8,47 +8,76 @@ import initSqlJs from 'sql.js';
 import { uploadFileWithData } from '@/service/request';  
 import { store } from '@/main';  
 import { useTaskStore } from '../store/taskStore';  
+import { exportAllTableToCSVZip, exportTableToCSV } from '@/service/csvservice';
   
 const SQL = initSqlJs({  
     locateFile: (file) => `/node_modules/sql.js/dist/${file}`  
 });  
-  
+
+// 数据库展示相关
 const db = ref(null);  
 const dbOutput = ref('');  
 const tableNameOpt = ref('');  
 const tableNames = ref([]);  
 const tableData = ref([]);  
 const tableColumns = ref([]);  
-const fileName = ref(''); 
+const fileName = ref('');
+
+// csv导出相关
+const chosenTableName = ref('');
 
 const taskStore = useTaskStore(); 
   
 const dialogVisible = ref(false);  
 const uploadStatus = ref('');  
   
+// 文件上传相关
 const fileContent = ref(null);  
 const imgSrc = ref(null);  
 const uploadUrl = ref('http://localhost:3000/upload');  
 const upload = ref<UploadInstance>();
 
+// 处理导出按钮
+const handleCommand = (command) => {
+    switch(command)
+    {
+        case 'a':
+            exportTableToCSV(db.value, chosenTableName.value);
+            break;
+        case 'b':
+            let tables = []
+            tableNames.value.forEach((element) => {
+                tables.push(element.value);
+            })
+            exportAllTableToCSVZip(db.value, tables);
+            break;
+        default:
+            break;
+    }
+}
+
+// 数据库表选择下拉框
 const handleTableSelectChange = async (value) => {
+    chosenTableName.value = value;
     tableData.value=[];
     tableColumns.value=[];
     const result = await db.value.exec(`SELECT * FROM ${value};`);
-    const columns = result[0].columns
+    console.log(result);
+    const columns = result[0].columns;
     for(let col of columns) {
-        tableColumns.value.push({prop:col, label:col})
+        tableColumns.value.push({prop:col, label:col});
     }
-    const values = result[0].values
+    const values = result[0].values;
     for(let value of values) {
-        let obj = {}
+        let obj = {};
         for(let i=0;i<columns.length;i++) {
-            obj[columns[i]] = value[i]
+            obj[columns[i]] = value[i];
         }
-        tableData.value.push(obj)
+        tableData.value.push(obj);
     }
 }
-  
+
+// 上传的文件改变
 const handleChange = (file: any) => {
     dbOutput.value = ''
     try {
@@ -72,6 +101,7 @@ const handleChange = (file: any) => {
     fileContent.value = file.raw; 
 };
 
+// 上传的文件移除
 const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {  
     fileContent.value = null;  
     imgSrc.value = null;
@@ -83,6 +113,7 @@ const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
     console.log('remove');  
 };  
   
+// 上传的文件被替换
 const handleExceed: UploadProps['onExceed'] = (files) => {
     fileContent.value = null;  
     imgSrc.value = null;
@@ -97,6 +128,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
     upload.value!.handleStart(file);  
 };  
   
+// 文件内容上传至后端
 const submitUpload = async () => {  
   try {  
     if (!fileContent.value) {  
@@ -167,23 +199,36 @@ const submitUpload = async () => {
             <img class="displayImage" :src="imgSrc" />  
         </div>
         <div class="db-wrapper" v-else-if="tableNames.length !== 0">
-            <el-select v-model="tableNameOpt" placeholder="--请选择--" style="width: 240px" @change="handleTableSelectChange">
-                <el-option
-                    v-for="item in tableNames"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                />
-            </el-select>
-            <el-table :data="tableData" stripe style="width: 100%;">
-                <el-table-column
-                v-for="(col, index) in tableColumns"
-                :key="index"
-                :prop="col.prop"
-                :label="col.label"
-                >
-                </el-table-column>
-            </el-table>
+            <el-row>
+                <el-select v-model="tableNameOpt" placeholder="--请选择--" style="width: 90%" @change="handleTableSelectChange">
+                    <el-option
+                        v-for="item in tableNames"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+                <el-dropdown @command="handleCommand" style="width: 10%">
+                    <el-button style="width: 100%">导出</el-button>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item command="a" >选中的表导出为CSV</el-dropdown-item>
+                            <el-dropdown-item command="b" >全部表导出为CSV</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </el-row>
+            <el-row>
+                <el-table :data="tableData" stripe style="width: 100%;" max-height="400">
+                    <el-table-column
+                    v-for="(col, index) in tableColumns"
+                    :key="index"
+                    :prop="col.prop"
+                    :label="col.label"
+                    >
+                    </el-table-column>
+                </el-table>
+            </el-row>
         </div>
         <div class="no-file" v-else>  
             暂无文件  

@@ -12,7 +12,7 @@ const routes = [
     { path: '/main', component: Main, meta: { showTasklist: true } },
     { path: '/mask', component: MaskResults, meta: { showTasklist: true } },
     { path: '/identification', component: IdentificationResults, meta: { showTasklist: true } },
-    { path: '/upload', component: UploadAndView , meta: { showTasklist: true }},
+    { path: '/upload', component: UploadAndView, meta: { showTasklist: true } },
     { path: '/log', component: Log, meta: { showTasklist: true } },
     { path: '/download', component: DownloadAndShow, meta: { showTasklist: true } },
     { path: '/login', component: Login, meta: { showTasklist: false } }
