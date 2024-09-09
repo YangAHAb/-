@@ -66,14 +66,13 @@ const handleStartMask = async () => {
         ruleData.value['user_id'] = store.getUsername;  
         ruleData.value['task_id'] = 456;  
         console.log("ruleData:", ruleData.value);  
-        // const response = await post('/mask', ruleData.value);
-        const response = await get('/mask', { user_id: store.getUsername, task_id: 456 });
+        const response = await post('/mask', ruleData.value);
         console.log('脱敏请求成功:', response.data);  
         state.value = response.data.status;  
         taskStore.markAllTasksAsMasked(); 
     } catch (error) {  
         console.error('脱敏请求失败:', error);  
-    }  
+    }
 };
 
 // 从后端获取结果，使用sql.js解析
