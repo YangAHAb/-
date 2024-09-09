@@ -56,7 +56,7 @@ public class DataMasking {
             response.put("userId", userId);
             response.put("taskId", taskId);
             response.put("columnNames", columnNames);
-            response.put("canMaskColumnNames", ColumnType);
+            response.put("columnType", ColumnType);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
