@@ -39,11 +39,30 @@ const testData = ref({
 const showTableData = computed(() => {
     let newTable = [];
     for(let item of tableData.value) {
+        let level = '';
+        switch(item.status) {
+            case 1:
+            case 5:
+                level = 'L1';
+                break;
+            case 4:
+                level = 'L2';
+                break;
+            case 2:
+            case 3:
+                level = 'L3';
+                break;
+            case 0:
+                level = '不敏感';
+                break;
+            default:
+                level = 'N/A';
+        }
         newTable.push({
             database: item.database,
             table: item.table,
             column: item.column,
-            status: item.status?'敏感':'不敏感',
+            status: level,
         })
     }
     return newTable;
@@ -51,14 +70,21 @@ const showTableData = computed(() => {
 
 // 图表相关
 const allChartData = computed(() => {
-    let data = [
-        { value: 0, name: '敏感' },
-        { value: 0, name: '不敏感'}
-    ];
+    let data = [];
     for(let item of showTableData.value) {
+        let flag = 0;
+        if(data.length === 0) {
+            data.push({ value: 1, name: item.status });
+            continue;
+        }
         for(let e of data) {
-            if(item.status === e.name)
+            if(item.status === e.name) {
+                flag = 1;
                 e.value++;
+            }
+        }
+        if(!flag) {
+            data.push({ value: 1, name: item.status });
         }
     }
     return data;
@@ -88,15 +114,22 @@ const tableNames = computed(() => {
 
 // 数据库表选择下拉框
 const handleTableSelectChange = async (value) => {
-    let data = [
-        { value: 0, name: '敏感' },
-        { value: 0, name: '不敏感'}
-    ];
+    let data = [];
     for(let item of showTableData.value) {
-        if(item.table === value){
+        if(item.table === value) {
+            let flag = 0;
+            if(data.length === 0) {
+                data.push({ value: 1, name: item.status });
+                continue;
+            }
             for(let e of data) {
-                if(item.status === e.name)
+                if(item.status === e.name) {
+                    flag = 1;
                     e.value++;
+                }
+            }
+            if(!flag) {
+                data.push({ value: 1, name: item.status });
             }
         }
     }
@@ -117,7 +150,7 @@ const allChartOption = ref({
     },
     series: [
         {
-            name: '敏感情况',
+            name: '敏感等级',
             type: 'pie',
             radius: ['55%', '70%'],
             avoidLabelOverlap: false,
@@ -153,7 +186,7 @@ const singleChartOption = ref({
     },
     series: [
         {
-            name: '敏感情况',
+            name: '敏感等级',
             type: 'pie',
             radius: ['55%', '70%'],
             avoidLabelOverlap: false,
@@ -204,8 +237,8 @@ const handleGetIdentification = async () => {
                     table: key,  
                     column: result.columnNames[key][i],  
                     algorithm: 1,  
-                    state: result.canMaskColumnNames[key][i],  
-                    status: result.canMaskColumnNames[key][i]  
+                    state: result.columnType[key][i],  
+                    status: result.columnType[key][i]  
                 });  
             }  
         }  
@@ -224,7 +257,7 @@ onMounted(() => {
 })
 
 const getStatusClass = ({ row, column, rowIndex, columnIndex }) => {  
-    return row.status === '敏感' ? 'sensitive-cell' : '';  
+    return row.status === '不敏感' ? '' : 'sensitive-cell';  
 }; 
 
 </script>
@@ -255,7 +288,7 @@ const getStatusClass = ({ row, column, rowIndex, columnIndex }) => {
                     <el-table-column prop="database" label="数据库" />    
                     <el-table-column prop="table" label="表" />    
                     <el-table-column prop="column" label="列" />    
-                    <el-table-column prop="status" label="识别结果" :cell-class-name="getStatusClass" />    
+                    <el-table-column prop="status" label="敏感等级" :cell-class-name="getStatusClass" />    
                 </el-table>    
             </el-row>    
             <el-row style="margin-top: 20px;">    

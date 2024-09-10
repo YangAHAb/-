@@ -1,7 +1,7 @@
 <template>  
   <MenuBar class="semi-transparent-menu" />  
   <div class="container">  
-    <MenuBar class="semi-transparent-menu" />  
+    <!-- <MenuBar class="semi-transparent-menu" />   -->
     <div class="user-info-wrapper">  
       <div class="user-info">  
         <p class="welcome-text">欢迎, {{ username }}</p>  
@@ -14,6 +14,8 @@
 <script setup>  
 import { useRouter } from 'vue-router';  
 import { useUserStore } from '@/store/store'; // 假设你的状态管理库文件在store/userStore.js  
+import { computed } from 'vue';
+import MenuBar from '../MenuBar.vue';
   
 // 获取userStore实例  
 const userStore = useUserStore();  
