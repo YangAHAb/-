@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.yiyan.study.database.opengauss.OpengaussHelper;
 import com.yiyan.study.utils.userlogutil.UserLog;
 
+import java.io.File;
 import java.util.UUID;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -118,7 +119,19 @@ public class UploadController {
 
             String targetFileName = userId + "_" + taskId + ".db";
             Path targetLocation = fileStorageLocation.resolve(targetFileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            // 检查并删除已有同名数据库文件
+            File dbFile = new File(targetLocation.toString());
+            if (dbFile.exists()) {
+                if (dbFile.delete()) {
+                    System.out.println("已有的同名数据库文件已被删除。");
+                } else {
+                    System.out.println("无法删除已有的数据库文件。");
+                }
+            }
+
+            Files.copy(file.getInputStream(), targetLocation);
+            // Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             // 获取文件信息
             String filePath = targetLocation.toString();

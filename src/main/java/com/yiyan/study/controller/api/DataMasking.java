@@ -39,7 +39,7 @@ public class DataMasking {
             Map<String, List<String>> columnNames = sqLiteHelper.getAllColumns();
             Map<String, List<Integer>> ColumnType = sqLiteHelper.getAllColumnsType();
 
-            System.out.println(columnNames);
+            System.out.println("columnNames: " + columnNames);
             System.out.println(ColumnType);
 
             // log
@@ -151,6 +151,7 @@ public class DataMasking {
                 String columnName = columnEntry.getKey();
                 List<Object> columnData = columnEntry.getValue();
 
+                System.out.println("current columnName: " + columnName);
                 int idx = columns.indexOf(columnName);
                 List<Object> maskedColumnData = maskColumnData(columnData, tableRule.get(idx));
                 maskedTableData.put(columnName, maskedColumnData);
