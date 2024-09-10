@@ -1,4 +1,4 @@
-<template>  
+<template> 
   <div class="login-register-container">  
     <el-tabs v-model="activeTab" @tab-click="handleTabClick" class="custom-tabs">  
       <el-tab-pane label="登录" name="login">  
@@ -161,79 +161,80 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>  
-.login-register-container {      
-  display: flex;      
-  justify-content: center;      
-  align-items: center;      
-  height: 100vh;      
-  background-color: #ffffff; /* 将背景颜色更改为白色 */  
-}      
-      
-.custom-tabs {      
-  width: 450px;      
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 添加阴影 */      
-  border-radius: 12px;      
-  overflow: hidden;      
-}      
-      
-.custom-tabs /deep/ .el-tabs__header {      
-  background-color: #ffffff;      
-  padding: 15px 20px;      
-}      
-      
-.custom-tabs /deep/ .el-tabs__item {      
-  font-size: 18px;      
-  color: #666666;      
-  font-weight: 600;      
-  margin: 0 15px;      
-  transition: color 0.3s;      
-}      
-      
-.custom-tabs /deep/ .el-tabs__item.is-active {      
-  color: #409eff;      
-}      
-      
-.custom-tabs /deep/ .el-tabs__content {      
-  padding: 30px;      
-  background-color: #ffffff;      
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 为内容区域也添加阴影，如果需要的话 */  
-}      
-      
-.custom-form {      
-  display: flex;      
-  flex-direction: column;      
-}      
-      
-.custom-form .el-form-item {      
-  margin-bottom: 25px;      
-}      
-      
-.custom-form .el-input {      
-  border-radius: 8px;      
-  border: none;    
+<style scoped>    
+.login-register-container {    
+  display: flex;    
+  justify-content: center;    
+  align-items: center;    
+  height: 100vh;    
+}    
+    
+.custom-tabs {    
+  width: 450px;    
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);    
+  border-radius: 12px;    
+  overflow: hidden;    
+  background-color: rgba(255, 255, 255, 0.2); /* 设置为白色半透明 */    
+}    
+    
+.custom-tabs /deep/ .el-tabs__header {    
+  background-color: #d2b48c;    
+  padding: 15px 20px;    
+}    
+    
+.custom-tabs /deep/ .el-tabs__item {    
+  font-size: 18px;    
+  color: #ffffff;    
+  font-weight: 600;    
+  margin: 0 15px;    
+  transition: color 0.3s;    
+}    
+    
+.custom-tabs /deep/ .el-tabs__item.is-active {    
+  color: #393131;    
+}    
+    
+.custom-tabs /deep/ .el-tabs__content {    
+  padding: 30px;    
+  background-color: #ffffff;    
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);    
+}    
+    
+.custom-form {    
+  display: flex;    
+  flex-direction: column;    
+}    
+    
+.custom-form .el-form-item {    
+  margin-bottom: 25px;    
+}    
+    
+.custom-form .el-input {    
+  border-radius: 8px;    
+  border: none; /* 移除边框 */  
   box-shadow: none;    
-  padding: 0 20px;      
-  height: 50px;      
-  line-height: 50px;      
-  font-size: 16px;      
-}      
-      
-.custom-button {      
-  width: 100%;      
-  height: 50px;      
-  border-radius: 8px;      
-  font-size: 18px;      
-  background-color: #409eff;      
-  border-color: #409eff;      
-  color: #fff;      
-  transition: all 0.3s;      
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);      
-}      
-      
-.custom-button:hover {      
-  background-color: #66b1ff;      
-  border-color: #66b1ff;      
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);      
-}      
+  padding: 0 20px;    
+  height: 50px;    
+  line-height: 50px;    
+  font-size: 16px;    
+}    
+    
+.custom-button {    
+  width: 100%;    
+  height: 50px;    
+  border-radius: 8px;    
+  font-size: 18px;    
+  background-color: #d2b48c;    
+  border-color: #d2b48c;    
+  color: #ffffff;    
+  transition: all 0.3s;    
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);    
+}    
+    
+.custom-button:hover {    
+  background-color: #bcaa86;    
+  border-color: #bcaa86;    
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);    
+} 
+
 </style>

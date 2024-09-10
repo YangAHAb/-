@@ -110,8 +110,9 @@ const props = defineProps({
   .floating-task-list {  
     position: fixed;  
     width: 350px;  
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);  
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  
+    /* 使用卡其色背景的渐变 */  
+    background: linear-gradient(135deg, #f0e6d2, #d2b48c);  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
     padding: 20px;  
     border-radius: 10px;  
     z-index: 1000;  
@@ -121,7 +122,8 @@ const props = defineProps({
   .title {  
     font-size: 24px;  
     font-weight: bold;  
-    color: #333;  
+    /* 标题颜色调整为较深的棕色 */  
+    color: #5c4a38;  
     margin-bottom: 15px;  
   }  
   
@@ -133,18 +135,21 @@ const props = defineProps({
   .task-table th, .task-table td {  
     padding: 10px;  
     text-align: left;  
-    border-bottom: 1px solid #ddd;  
+    /* 表格边框颜色调整为浅棕色 */  
+    border-bottom: 1px solid #c8b4a0;  
   }  
   
   .task-table thead th {  
-    background-color: #eaeff5;  
-    color: #333;  
+    /* 表头背景使用浅卡其色 */  
+    background-color: #e0d0b8;  
+    color: #5c4a38;  
   }  
   
   .no-tasks {  
     text-align: center;  
     padding: 20px;  
-    color: #999;  
+    /* 空任务列表文字颜色调整为浅灰色 */  
+    color: #a09080;  
   }  
   
   .task-item {  
@@ -152,23 +157,28 @@ const props = defineProps({
   }  
   
   .task-item:hover {  
-    background-color: #f9f9f9;  
+    /* 悬停时背景色变为更深的卡其色 */  
+    background-color: #d8c6aa;  
   }  
   
   .task-state-active {  
+    /* 活跃状态颜色调整为绿色 */  
     color: #4caf50;  
   }  
   
   .task-state-pending {  
+    /* 待处理状态颜色调整为橙色 */  
     color: #ff9800;  
   }  
   
   .task-state-completed {  
+    /* 已完成状态颜色调整为灰色，并添加删除线 */  
     color: #9e9e9e;  
     text-decoration: line-through;  
   }  
   
   .reupload-button {  
+    /* 重新上传按钮背景色调整为绿色 */  
     background-color: #a1f9a4;  
     color: white;  
     border: none;  
@@ -183,6 +193,7 @@ const props = defineProps({
   }  
   
   .close-button {  
+    /* 关闭按钮背景色调整为棕色 */  
     background-color: #ab3f38;  
     color: white;  
     border: none;  
@@ -195,6 +206,5 @@ const props = defineProps({
   
   .close-button:hover {  
     background-color: #833736;  
-  } 
-
+  }  
 </style>

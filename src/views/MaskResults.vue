@@ -66,13 +66,14 @@ const handleStartMask = async () => {
         ruleData.value['user_id'] = store.getUsername;  
         ruleData.value['task_id'] = 456;  
         console.log("ruleData:", ruleData.value);  
-        const response = await post('/mask', ruleData.value);
+        // const response = await post('/mask', ruleData.value);
+        const response = await get('/mask', { user_id: store.getUsername, task_id: 456 });
         console.log('脱敏请求成功:', response.data);  
         state.value = response.data.status;  
         taskStore.markAllTasksAsMasked(); 
     } catch (error) {  
         console.error('脱敏请求失败:', error);  
-    }
+    }  
 };
 
 // 从后端获取结果，使用sql.js解析
@@ -158,7 +159,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <MenuBar />
+     <MenuBar class="semi-transparent-menu" />
+     <br> 
     <tesklist/>
     <el-row>
         <el-table :data="tableColData" max-height="400">
@@ -189,12 +191,15 @@ onMounted(() => {
         </el-table>
     </el-row>
     <el-row justify="space-evenly">
+        <br>
         <el-col :span="12">
+            <br>
             <el-button type="primary" @click="handleStartMask">
                     开始脱敏
             </el-button>
         </el-col>
         <el-col :span="12">
+            <br>
             <el-button type="primary" @click="handleMaskResult">
                     查看结果
             </el-button>
@@ -243,21 +248,49 @@ onMounted(() => {
     </el-row>
 </template>
 
-<style scoped>
+<style scoped>  
 .no-file {  
     font-size: 16px;  
-    color: #999;  
+    color: #333333;  
     text-align: center;  
-    padding: 20px;
-}
-
-.db-wrapper {
-    width: 100%;
-    border: 2px solid #e4e7ed;
+    padding: 20px;  
+    background-color: #FAF5E6; 
+}  
+  
+.db-wrapper {  
+    width: 100%;  
+    border: 2px solid #D2B48C; 
     border-radius: 8px;  
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
     padding: 10px;  
-    transition: all 0.3s; /* 过渡动画 */
-}
+    background-color: #F0E6D2; 
+    transition: all 0.3s; 
+}  
+  
 
+.el-table {  
+    background-color: #FFFFFF;
+    border-color: #D2B48C; 
+}  
+  
+.el-table th, .el-table td {  
+    color: #333333;
+}
+.el-button {  
+    background-color: #D2B48C;
+    color: #FFFFFF; 
+    border-color: #A08050; 
+}  
+  
+.el-button:hover {  
+    background-color: #A08050; 
+}  
+  
+
+.el-select, .el-dropdown {  
+    border-color: #D2B48C; 
+}  
+.semi-transparent-menu {  
+  opacity: 0.8;
+} 
 </style>

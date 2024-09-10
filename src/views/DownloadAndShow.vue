@@ -42,40 +42,73 @@ onMounted(() => {
 });  
 </script>
   
-<template>
-<MenuBar />  
-  <div class="download-container">  
-    <el-select v-model="selectedFileName" placeholder="请选择文件">  
-      <el-option  
-        v-for="file in fileList"  
-        :key="file"  
-        :label="file"  
-        :value="file">  
-      </el-option>  
-    </el-select>  
-    <el-button class="downloadbu" type="success" @click="downloadSelectedFile">下载文件</el-button>  
-  </div>  
-</template>
-
-<style scoped>  
-.download-container {  
-  display: flex;  
-  align-items: center;  
-  justify-content: center;  
-  padding: 30px;  
-  background-color: #f5f5f5; /* 背景色 */  
-  border-radius: 8px;  
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); /* 阴影 */  
-}  
-
-.downloadbu{
-  padding: 5px;
-
-}
-.el-input {  
-  margin-right: 20px;  
-}
-
-
-
+<template>    
+  <MenuBar class="semi-transparent-menu" />   
+  <div class="download-container">    
+    <el-select v-model="selectedFileName" placeholder="请选择文件">    
+      <el-option    
+        v-for="file in fileList"    
+        :key="file"    
+        :label="file"    
+        :value="file">    
+      </el-option>    
+    </el-select>    
+    <el-button class="downloadbu" type="success" @click="downloadSelectedFile">下载文件</el-button>    
+  </div>    
+</template>    
+    
+<style scoped>    
+.download-container {    
+  display: flex;    
+  align-items: center;    
+  justify-content: center;    
+  padding: 30px;    
+  background-color: transparent;  
+  border-radius: 12px;    
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);    
+  flex-direction: column;    
+  gap: 20px;    
+  max-width: 400px;    
+  margin: 40px auto 0; /* 增加顶部边距，水平居中 */    
+}    
+    
+.downloadbu {    
+  padding: 10px 20px;    
+  background-color: #8B4513;    
+  border-color: #8B4513;    
+  color: white;    
+  border-radius: 8px;    
+  font-size: 16px;    
+  transition: background-color 0.3s, border-color 0.3s;    
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加按钮阴影效果 */    
+}    
+    
+.downloadbu:hover {    
+  background-color: #6B3E08;    
+  border-color: #6B3E08;    
+}    
+    
+.el-select {    
+  width: 100%;    
+  max-width: 400px;    
+  background-color: #F9F9F9; /* 为选择框添加浅色背景 */    
+  border-radius: 8px;    
+  padding: 10px;    
+}    
+    
+.el-input__inner {    
+  border-radius: 8px;    
+  padding: 10px;    
+  font-size: 16px;    
+  border-color: #D2B48C;    
+}    
+    
+.el-input__inner:focus {    
+  border-color: #8B4513;    
+  box-shadow: 0 0 5px rgba(139, 69, 19, 0.5); /* 添加聚焦时的阴影效果 */    
+}    
+    
+.semi-transparent-menu {    
+  opacity: 0.8;    
+}    
 </style>

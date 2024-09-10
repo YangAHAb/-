@@ -165,7 +165,7 @@ const submitUpload = async () => {
 </script>  
   
 <template>
- <MenuBar />
+ <MenuBar class="semi-transparent-menu" /> 
  
     <el-row class="upload-container">  
         <el-upload  
@@ -237,88 +237,104 @@ const submitUpload = async () => {
 </template>  
   
 <style scoped>  
-.upload-container {  
-    display: flex;  
-    align-items: center;  
-    justify-content: space-between;  
-    padding: 30px;  
-    background-color: #f5f5f5; /* 背景色 */  
-    border-radius: 8px;   
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); /* 阴影 */  
+.semi-transparent-menu {  
+  opacity: 0.8;  
+  margin-bottom: 20px;  
 }  
   
-.el-upload__tip{
-    margin-left: 10px;
-}
+.upload-container {  
+  display: flex;  
+  align-items: center;  
+  justify-content: space-between;  
+  padding: 30px 50px;  /* 增加左右内边距 */  
+  background-color: #f0e6d2;  
+  border-radius: 8px;  
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);  
+}  
+  
+.el-upload__tip {  
+  margin-left: 10px;  
+}  
+  
 .upload-db {  
-    flex: 1;  
-    border: 2px dashed #909399; /* 边框色 */  
-    border-radius: 8px;  
-    cursor: pointer;  
-    position: relative;  
-    overflow: hidden;  
-    background-color: #ffffff; /* 背景色 */  
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 阴影 */  
-    transition: all 0.3s; /* 过渡动画 */  
+  flex: 1;  
+  border: 2px dashed #b3a395;  
+  border-radius: 8px;  
+  cursor: pointer;  
+  position: relative;  
+  overflow: hidden;  
+  background-color: #fff5ee;  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
+  transition: all 0.3s;  
 }  
   
 .upload-db:hover {  
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);  
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);  
 }  
   
 .upload-button {  
-    background-color: #409EFF; /* 按钮背景色 */  
-    color: #ffffff; /* 按钮文字色 */  
-    padding: 20px 50px;  
-    border-radius: 6px; 
-    margin-left: 20px; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影 */  
-    transition: all 0.3s; /* 过渡动画 */
-
+  background-color: #a58b6d;  
+  color: #ffffff;  
+  padding: 10px 20px;  
+  border-radius: 6px;  
+  margin-left: 30px;  
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);  
+  transition: all 0.3s;  
 }  
   
 .upload-button:hover {  
-    background-color: #66b1ff;
+  background-color: #8b7359;  
 }  
   
 .image-container {  
-    display: flex;  
-    justify-content: center;  
-    align-items: center;  
-    margin-top: 20px;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+  margin-top: 30px;  
+  padding: 0 50px;  /* 增加左右内边距 */  
 }  
   
 .image-wrapper {  
-    border: 2px solid #e4e7ed;
-    border-radius: 8px;  
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 10px;  
-    transition: all 0.3s; /* 过渡动画 */  
-}
+  border: 2px solid #d2c0a5;  
+  border-radius: 8px;  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
+  padding: 10px;  
+  transition: all 0.3s;  
+}  
   
 .image-wrapper:hover {  
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);  
 }  
   
 .displayImage {  
-    width: 100%;  
-    border-radius: 6px;  
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 阴影 */  
+  width: 100%;  
+  border-radius: 6px;  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
 }  
   
 .no-file {  
-    font-size: 16px;  
-    color: #999;  
-    text-align: center;  
-    padding: 20px;
-}
-
-.db-wrapper {
-    width: 100%;
-    border: 2px solid #e4e7ed;
-    border-radius: 8px;  
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 10px;  
-    transition: all 0.3s; /* 过渡动画 */
-}
+  font-size: 16px;  
+  color: #6d5945;  
+  text-align: center;  
+  padding: 20px;  
+}  
+  
+.db-wrapper {  
+  width: 100%;  
+  max-width: 800px;  
+  border: 2px solid #d2c0a5;  
+  border-radius: 8px;  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
+  padding: 20px;  
+  transition: all 0.3s;  
+}  
+  
+.el-select, .el-dropdown {  
+  width: 48%;  
+  margin-right: 4%;  
+}  
+  
+.el-dropdown {  
+  margin-right: 0;  
+}  
 </style>
